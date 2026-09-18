@@ -327,7 +327,7 @@ code, kbd, samp {
 .brand__logo[data-failed] { display: none; }
 .brand:has(.brand__logo:not([data-failed])) .brand__mark { display: none; }
 
-.brand__text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand__text { display: flex; flex-direction: column; line-height: 1.1;  row-gap: 0.3rem;}
 .brand__title {
   font-family: var(--font-display);
   font-weight: 600;
@@ -686,18 +686,32 @@ code, kbd, samp {
 /* Photo wall — postdocs and graduate students, portrait per person */
 .wall {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(45%, 10.5rem), 1fr));
-  gap: var(--sp-5) var(--sp-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14.5rem), 1fr));
+  gap: var(--sp-4) var(--sp-5);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .wall li { margin: 0; }
-.wall__item { display: flex; flex-direction: column; gap: 0.45rem; }
+.wall__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--rule);
+}
+.wall__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
 .wall__photo {
   position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
+  flex: none;
+  width: 8.0rem;
+  aspect-ratio: 4.5 / 5;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -705,13 +719,16 @@ code, kbd, samp {
   border-radius: var(--r-sm);
   background: var(--paper-2);
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--ink-low);
   box-shadow: var(--shadow-1);
   transition: box-shadow 0.2s var(--ease), border-color 0.2s var(--ease);
 }
 .wall__item:hover .wall__photo { box-shadow: var(--shadow-2); border-color: var(--rule-strong); }
+@media (max-width: 420px) {
+  .wall__photo { width: 4.75rem; }
+}
 .wall__photo img {
   position: absolute;
   inset: 0;
