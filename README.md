@@ -82,33 +82,28 @@ You only do this once per computer.
 
 ### 1.2 Install the tools
 
-You need three things: **Git** (tracks changes and talks to GitHub), **Python 3**
-(runs the page scripts) and **VS Code** (the editor you'll work in).
+These instructions are for **Debian-based Linux** (Debian, Ubuntu, Linux Mint, Pop!_OS…).
 
-Most Linux systems already have Python 3, and often Git. Open a terminal
-(`Ctrl+Alt+T` on Ubuntu) and install whatever is missing:
+You need four things: **Git** (tracks changes and talks to GitHub), **Python 3**
+(runs the page scripts), **ImageMagick** (shrinks photos, see [3.6](#36-photos-and-images))
+and **VS Code** (the editor you'll work in).
+
+Open a terminal (`Ctrl+Alt+T`) and run:
 
 ```bash
-# Ubuntu / Debian / Linux Mint
 sudo apt update
-sudo apt install git python3
-
-# Fedora
-sudo dnf install git python3
-
-# Arch / Manjaro
-sudo pacman -S git python
+sudo apt install git python3 imagemagick
 ```
 
-For **VS Code**, download the `.deb` (Ubuntu / Debian) or `.rpm` (Fedora) package
-from <https://code.visualstudio.com> and install it, for example:
+For **VS Code**, download the **`.deb`** package from <https://code.visualstudio.com>,
+then install it from the folder you downloaded it to:
 
 ```bash
-sudo apt install ./code_*.deb      # run this in the folder you downloaded it to
+cd ~/Downloads
+sudo apt install ./code_*.deb
 ```
 
-or, on Ubuntu, simply `sudo snap install code --classic`. Then start it from
-your applications menu or by typing `code` in a terminal.
+Start it from your applications menu, or by typing `code` in a terminal.
 
 Nothing else is needed. The scripts use only what comes with Python.
 
@@ -117,6 +112,7 @@ Check everything works:
 ```bash
 git --version
 python3 --version
+mogrify -version
 ```
 
 Each should print a version number.
@@ -533,16 +529,57 @@ before pushing.
 
 ### 3.6 Photos and images
 
-1. Prepare the image:
-   - **Member portraits:** crop to a **4:5 portrait** (e.g. 600 × 750 px) with the face in the upper part.
-   - **File type:** `.webp` (smallest) or `.jpg`. Aim for under ~150 KB.
-     <https://squoosh.app> converts and shrinks images for free in the browser.
+**Always shrink a photo and convert it to WebP before adding it.** A phone
+photo is often 3–5 MB; the same picture as a 600 px WebP is around 30–80 KB.
+Small images keep the pages fast and the repository small. GitHub Pages has
+usage limits: the published site may be at most **1 GB**, and there is a soft
+**bandwidth limit of 100 GB per month**
+([GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)).
+Every visitor downloads the images, so large files use that up quickly.
+
+#### Shrink and convert with ImageMagick (`mogrify`)
+
+ImageMagick is installed in [1.2](#12-install-the-tools). If `mogrify` is
+missing, install it with:
+
+```bash
+sudo apt install imagemagick
+```
+
+Then, in the `website` folder, with the original photo saved there as
+`priya-nair.jpg` (already named after the person, see step 2 below):
+
+```bash
+mogrify -path assets/Members -resize 600x600\> -quality 85 -format webp priya-nair.jpg
+```
+
+| Part | What it does |
+|---|---|
+| `-path assets/Members` | Writes the result into `assets/Members/` (the folder must already exist). The original `priya-nair.jpg` is **not** changed. |
+| `-resize 600x600\>` | Shrinks the picture so neither side is bigger than 600 px, keeping its shape. The `\>` means "only shrink, never enlarge". A 4:5 portrait becomes 480 × 600 px. |
+| `-quality 85` | Good quality at a small size. Lower it (e.g. `75`) for an even smaller file. |
+| `-format webp` | Saves it as `priya-nair.webp`. |
+| `priya-nair.jpg` | The photo to convert. Works with `.jpg`, `.jpeg` and `.png` too. |
+
+The result is `assets/Members/priya-nair.webp`. Check its size with
+`ls -lh assets/Members/priya-nair.webp`, then delete the original `.jpg` from
+the `website` folder so you don't commit it by accident.
+
+- **Several photos at once:** `mogrify -path assets/Members -resize 600x600\> -quality 85 -format webp *.jpg`
+- **A symposium poster:** keep it larger so the text stays readable:
+  `mogrify -path assets/ConferenceWorkshop -resize 1600x1600\> -quality 85 -format webp symposium-2027.jpg`
+
+All options are explained on the ImageMagick page: <https://imagemagick.org/mogrify/>
+
+#### Then add it to the site
+
+1. **Member portraits:** crop to a **4:5 portrait** with the face in the upper part
+   before converting (any image viewer or editor such as GIMP can crop).
 2. **Name it after the person or event, in lowercase, with hyphens and no spaces**:
    `priya-nair.webp`, `symposium-2027.webp`. All existing files follow this pattern,
    so you can always tell whose photo a file is.
-3. Put it in the right folder (`assets/Members/` for people,
-   `assets/ConferenceWorkshop/` for posters). You can drag it into that folder in
-   the VS Code Explorer.
+3. Make sure it is in the right folder (`assets/Members/` for people,
+   `assets/ConferenceWorkshop/` for posters).
 4. Write **exactly** that file name in the `"photo"` / `"poster"` field and re-run the script.
 
 > ⚠️ **Capital letters matter.** Linux and GitHub Pages treat `Priya-Nair.webp`
@@ -683,6 +720,7 @@ Run these in the `website` folder (VS Code: **Terminal → New Terminal**):
 
 ```bash
 git pull                                   # 1. get the latest
+mogrify -path assets/Members -resize 600x600\> -quality 85 -format webp priya-nair.jpg  # shrink a new photo
 # … edit the script and save …
 python3 _source/build_members.py           # 2. rebuild the page
 git status                                 # see which files changed
@@ -704,7 +742,8 @@ git clone https://github.com/hepiitk/website.git
 - [ ] I pulled before I started.
 - [ ] I edited the **script**, not the `.html` file, and I **ran** it with no errors.
 - [ ] I previewed the page in a browser and it looks right.
-- [ ] New photos show (not initials), and file names are lowercase with the right extension.
+- [ ] New photos are shrunk to WebP (tens of KB, not MB), show on the page (not initials), and their file names are lowercase.
+- [ ] I'm not committing the large original photo (`.jpg` / `.png`).
 - [ ] I'm committing the `.py` file, the `.html` file(s) it wrote, and any new images.
 - [ ] My commit message says what I changed.
 
