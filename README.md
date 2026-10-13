@@ -47,10 +47,10 @@ _source/                  The four scripts that write the pages above
 
 assets/style.css    The design: colours, fonts, spacing, layout (all pages share it)
 assets/app.js       Small scripts: mobile menu, member search, animations
-assets/Members/     Member photos, named after the person: arjun-bagchi.webp
+assets/Members/     Member photos, named after the person: priya-nair.webp
 assets/ConferenceWorkshop/   Symposium posters: symposium-2026.webp
 assets/img/         Line drawings used across the site
-.gitignore          Tells Git to ignore Python's __pycache__ folder and Mac .DS_Store files
+.gitignore          Tells Git to ignore Python's __pycache__ folder and stray .DS_Store files
 ```
 
 > **The one rule to remember: change the script, not the HTML.**
@@ -82,27 +82,47 @@ You only do this once per computer.
 
 ### 1.2 Install the tools
 
-| Tool | What it's for | Get it |
-|---|---|---|
-| **Git** | Tracks changes and talks to GitHub | <https://git-scm.com/downloads>. On Windows, accept all the defaults in the installer. |
-| **VS Code** | The editor you'll work in | <https://code.visualstudio.com> |
-| **Python 3** | Runs the page scripts | <https://www.python.org/downloads/>. On Windows, **tick "Add python.exe to PATH"** on the first installer screen. |
+You need three things: **Git** (tracks changes and talks to GitHub), **Python 3**
+(runs the page scripts) and **VS Code** (the editor you'll work in).
+
+Most Linux systems already have Python 3, and often Git. Open a terminal
+(`Ctrl+Alt+T` on Ubuntu) and install whatever is missing:
+
+```bash
+# Ubuntu / Debian / Linux Mint
+sudo apt update
+sudo apt install git python3
+
+# Fedora
+sudo dnf install git python3
+
+# Arch / Manjaro
+sudo pacman -S git python
+```
+
+For **VS Code**, download the `.deb` (Ubuntu / Debian) or `.rpm` (Fedora) package
+from <https://code.visualstudio.com> and install it, for example:
+
+```bash
+sudo apt install ./code_*.deb      # run this in the folder you downloaded it to
+```
+
+or, on Ubuntu, simply `sudo snap install code --classic`. Then start it from
+your applications menu or by typing `code` in a terminal.
 
 Nothing else is needed. The scripts use only what comes with Python.
 
-Check they work: open a terminal (in VS Code, **Terminal → New Terminal**) and run
+Check everything works:
 
 ```bash
 git --version
 python3 --version
 ```
 
-Each should print a version number. On macOS, if `git` asks to install the
-developer tools, click **Install**. **On Windows**, type `python` (or `py`)
-instead of `python3`, here and everywhere else in this guide.
+Each should print a version number.
 
 **Recommended VS Code extensions.** Open the **Extensions** panel (the
-four-squares icon on the left, or `Ctrl+Shift+X`, `Cmd+Shift+X` on Mac) and install:
+four-squares icon on the left, or `Ctrl+Shift+X`) and install:
 
 - **Python** (by Microsoft): colours the scripts and underlines mistakes in red.
 - **Live Server** (by Ritwick Dey): shows the pages in your browser and refreshes them as they change.
@@ -125,8 +145,7 @@ on your GitHub profile.
 1. Open VS Code.
 2. Click the **Source Control** icon on the left: three dots joined by lines, or
    `Ctrl+Shift+G`.
-3. Click **Clone Repository**. Alternatively, press `Ctrl+Shift+P` (`Cmd+Shift+P`
-   on Mac), type **Git: Clone** and press Enter.
+3. Click **Clone Repository**. Alternatively, press `Ctrl+Shift+P`, type **Git: Clone** and press Enter.
 4. Paste this address and press Enter:
    ```
    https://github.com/hepiitk/website.git
@@ -173,7 +192,7 @@ followed by the lists you edit, under headings like:
 # ==========================================================================
 ```
 
-Part 3 shows exactly what to change for each task. Save with `Ctrl+S` (`Cmd+S` on Mac).
+Part 3 shows exactly what to change for each task. Save with `Ctrl+S`.
 
 > Lower down, under *"PAGE LAYOUT — you rarely need to change anything below"*,
 > is the code that turns the lists into HTML. You don't need to touch it to
@@ -211,7 +230,7 @@ Never push a change you haven't looked at.
 
 - **With Live Server:** right-click the `.html` file in the Explorer → **Open with
   Live Server**. A browser tab opens. Each time you re-run the script, it refreshes.
-- **Without it:** find the file in your file manager and double-click it to open it in your browser.
+- **Without it:** open the file from your file manager, or run `xdg-open members.html` in the terminal.
 
 Check that:
 
@@ -233,7 +252,7 @@ Check that:
 3. Hover over **Changes** and click **+** (*Stage All Changes*). The files move to **Staged Changes**.
 4. Type a short message in the box at the top saying **what** you changed, e.g.
    - `Add Priya Nair to graduate students`
-   - `News: Humboldt fellowship for Upalaparna Banerjee`
+   - `News: Humboldt fellowship for Rahul Verma`
    - `Add 2027 symposium`
 5. Click **✓ Commit**.
 
@@ -251,7 +270,7 @@ Then check that it's live:
 1. Go to <https://github.com/hepiitk/website> and wait for the small **yellow dot**
    next to the latest commit to turn into a **green tick ✓**. That takes about 1–2 minutes.
 2. Open <https://hepiitk.github.io/website/> and do a **hard refresh**
-   (`Ctrl+Shift+R`, or `Cmd+Shift+R` on Mac) so your browser doesn't show an old copy.
+   (`Ctrl+Shift+R`) so your browser doesn't show an old copy.
 
 That's the whole routine.
 
@@ -266,13 +285,13 @@ The data in the scripts looks like this. You only need these few rules:
 ```python
 STUDENTS = [                                  # a list starts with [
     {                                         # one person = one { … } block
-        "name": "Abhijit Kishore",            # "field": value,
-        "photo": "abhijit-kishore.webp",
+        "name": "Amit Sharma",                # "field": value,
+        "photo": "amit-sharma.webp",
         "web": None,
-        "inspire": "2870898",
+        "inspire": "1111111",
     },                                        # the block ends with },
     {
-        "name": "Ankit Gill",
+        "name": "Neha Gupta",
         …
     },
 ]                                             # … and the list ends with ]
@@ -313,7 +332,7 @@ Everything about a person (name, photo, links, interests) is in **their own
     {
         "name": "Priya Nair",
         "photo": "priya-nair.webp",
-        "web": "https://home.iitk.ac.in/~priya/",
+        "web": "https://example.com/priya-nair/",
         "inspire": "2912345",
     },
 ```
@@ -346,7 +365,7 @@ Faculty blocks (under the `FACULTY` heading) have one more field, the interests:
     {
         "name": "Priya Nair",
         "photo": "priya-nair.webp",
-        "web": "https://home.iitk.ac.in/~priya/",
+        "web": "https://example.com/priya-nair/",
         "inspire": "1234567",
         "interests": "Neutrino physics, detector development.",
     },
@@ -391,9 +410,9 @@ Find `NEWS = [` and paste a new block **at the top**, because the list is newest
 NEWS = [
     {
         "tag": "Award",
-        "title": "Humboldt Research Fellowship for Upalaparna Banerjee",
-        "body": "Upalaparna Banerjee has been awarded a Humboldt Research Fellowship "
-                "for postdocs. Congratulations, Upala!",
+        "title": "Humboldt Research Fellowship for Rahul Verma",
+        "body": "Rahul Verma has been awarded a Humboldt Research Fellowship "
+                "for postdocs. Congratulations, Rahul!",
         "link": None,
     },
     {
@@ -411,7 +430,7 @@ NEWS = [
 
 #### PMRF fellows
 
-`PMRF = ["Amartya Saha", "Subrata Samanta", "Aryabrat Mahapatra"]`. Add or remove
+`PMRF = ["Amit Sharma", "Neha Gupta", "Rahul Verma"]`. Add or remove
 a name in quotes, separated by commas.
 
 #### Postdoc positions text
@@ -526,11 +545,10 @@ before pushing.
    the VS Code Explorer.
 4. Write **exactly** that file name in the `"photo"` / `"poster"` field and re-run the script.
 
-> ⚠️ **Capital letters matter on the live site.** GitHub Pages treats
-> `Priya-Nair.webp` and `priya-nair.webp` as **different files**, even though
-> your own computer may not. If a photo shows on your computer but only
-> **initials** show on the live site, check the capital letters and the
-> extension (`.webp` vs `.jpg`) in both the file name and the script.
+> ⚠️ **Capital letters matter.** Linux and GitHub Pages treat `Priya-Nair.webp`
+> and `priya-nair.webp` as **different files**. If a photo shows only
+> **initials**, check the capital letters and the extension (`.webp` vs `.jpg`)
+> in both the file name and the script.
 
 Remember to **commit the image file too**. It appears under **Changes** with a **U** (untracked).
 
@@ -570,8 +588,9 @@ The red squiggly underline from the **Python** extension usually points at the p
 
 ### "`python3` is not recognised / command not found"
 
-On Windows, use `python` or `py` instead of `python3`. If none work, re-install
-Python and tick **"Add python.exe to PATH"**. Then **close and reopen VS Code**.
+Python isn't installed. Install it with your package manager (see
+[1.2](#12-install-the-tools)), for example `sudo apt install python3`, then
+**close and reopen VS Code**.
 
 ### "My change disappeared"
 
@@ -621,7 +640,7 @@ To avoid conflicts: **pull before you start**, keep each change small, and
 1. Did you run the script, and commit the **`.html`** file, not just the `.py`?
 2. On <https://github.com/hepiitk/website>, check that your commit is there with a **green tick ✓**.
    A **red ✗** means publishing failed: click it to see why, or ask another editor.
-3. Hard-refresh the page: `Ctrl+Shift+R` (`Cmd+Shift+R` on Mac).
+3. Hard-refresh the page: `Ctrl+Shift+R`.
 4. Wait two minutes and try again.
 
 ### "A photo shows only initials"
