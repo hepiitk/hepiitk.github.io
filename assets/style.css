@@ -1397,6 +1397,7 @@ code, kbd, samp {
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+  /* transition-delay: var(--reveal-delay, 0ms); */
 }
 .js [data-reveal].is-in { opacity: 1; transform: none; }
 
@@ -1408,6 +1409,22 @@ code, kbd, samp {
     transition-duration: 0.001ms !important;
   }
   .js [data-reveal] { opacity: 1; transform: none; }
+}
+
+@keyframes slide-up-once {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+[data-reveal="once"],
+.js [data-reveal="once"] {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  animation: slide-up-once 0.5s var(--ease) 0.1s backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal="once"],
+  .js [data-reveal="once"] { animation: none; }
 }
 
 @media print {
