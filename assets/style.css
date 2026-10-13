@@ -812,7 +812,7 @@ code, kbd, samp {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--rule);
+  /* border-top: 1px solid var(--rule); */
 }
 .alumni li {
   display: grid;
