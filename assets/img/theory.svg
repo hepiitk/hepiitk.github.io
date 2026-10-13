@@ -1,45 +1,160 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Line drawing of a one-loop Feynman diagram">
-  <title>Particle theory</title>
-  <rect width="480" height="300" fill="#fbfaf6"/>
-  <g fill="none" stroke="#c5bfae" stroke-width="0.8">
-    <path d="M0 250h480M0 60h480" opacity=".45"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 480 300"
+   role="img"
+   aria-label="Line drawing of a one-loop Feynman diagram"
+   version="1.1"
+   id="svg14"
+   sodipodi:docname="theory.svg"
+   inkscape:version="1.4.4 (1:1.4.4+202605061432+dcaf3e7d9e)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="3.7366667"
+     inkscape:cx="240.05352"
+     inkscape:cy="150"
+     inkscape:window-width="2494"
+     inkscape:window-height="1371"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg14" />
+  <title
+     id="title1">Particle theory</title>
+  <rect
+     width="480"
+     height="300"
+     fill="#fbfaf6"
+     id="rect1" />
+  <g
+     fill="none"
+     stroke="#c5bfae"
+     stroke-width="0.8"
+     id="g1">
+    <path
+       d="M0 250h480M0 60h480"
+       opacity=".45"
+       id="path1" />
   </g>
-
   <!-- incoming fermion lines -->
-  <g fill="none" stroke="#101216" stroke-width="1.6" stroke-linecap="round">
-    <path d="M40 80 L150 150"/>
-    <path d="M40 220 L150 150"/>
-    <path d="M330 150 L440 80"/>
-    <path d="M330 150 L440 220"/>
+  <g
+     fill="none"
+     stroke="#101216"
+     stroke-width="1.6"
+     stroke-linecap="round"
+     id="g5">
+    <path
+       d="M40 80 L150 150"
+       id="path2" />
+    <path
+       d="M40 220 L150 150"
+       id="path3" />
+    <path
+       d="M330 150 L440 80"
+       id="path4" />
+    <path
+       d="M330 150 L440 220"
+       id="path5" />
   </g>
   <!-- direction arrows -->
-  <g fill="#101216">
-    <path d="M92 113 l14 2 -11 8 z"/>
-    <path d="M92 187 l11 8 -14 2 z"/>
-    <path d="M388 113 l-14 2 11 8 z" opacity=".9"/>
-    <path d="M388 187 l-11 8 14 2 z" opacity=".9"/>
+  <g
+     fill="#101216"
+     id="g9">
+    <path
+       d="M92 113 l14 2 -11 8 z"
+       id="path6" />
+    <path
+       d="m 88.39429,181.38001 11,8 -14,2 z"
+       id="path7" />
+    <path
+       d="M388 113 l-14 2 11 8 z"
+       opacity=".9"
+       id="path8" />
+    <path
+       d="m 390.9438,181.1124 -11,8 14,2 z"
+       opacity="0.9"
+       id="path9" />
   </g>
-
   <!-- the loop -->
-  <ellipse cx="240" cy="150" rx="90" ry="58" fill="none" stroke="#7d1f2c" stroke-width="1.8"/>
-  <ellipse cx="240" cy="150" rx="90" ry="58" fill="none" stroke="#7d1f2c" stroke-width="6" opacity=".08"/>
-
+  <ellipse
+     cx="240"
+     cy="150"
+     rx="90"
+     ry="58"
+     fill="none"
+     stroke="#7d1f2c"
+     stroke-width="1.8"
+     id="ellipse9" />
+  <ellipse
+     cx="240"
+     cy="150"
+     rx="90"
+     ry="58"
+     fill="none"
+     stroke="#7d1f2c"
+     stroke-width="6"
+     opacity=".08"
+     id="ellipse10" />
   <!-- exchanged boson: wavy line across the loop -->
-  <path d="M150 150 q12 -16 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"
-        fill="none" stroke="#1d3557" stroke-width="1.5" stroke-linecap="round"/>
-
+  <path
+     d="M150 150 q12 -16 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"
+     fill="none"
+     stroke="#1d3557"
+     stroke-width="1.5"
+     stroke-linecap="round"
+     id="path10" />
   <!-- vertices -->
-  <g fill="#101216">
-    <circle cx="150" cy="150" r="5"/>
-    <circle cx="330" cy="150" r="5"/>
+  <g
+     fill="#101216"
+     id="g11">
+    <circle
+       cx="150"
+       cy="150"
+       r="5"
+       id="circle10" />
+    <circle
+       cx="330"
+       cy="150"
+       r="5"
+       id="circle11" />
   </g>
-  <g fill="none" stroke="#7d1f2c" stroke-width="0.9" opacity=".65">
-    <circle cx="150" cy="150" r="12"/>
-    <circle cx="330" cy="150" r="12"/>
+  <g
+     fill="none"
+     stroke="#7d1f2c"
+     stroke-width="0.9"
+     opacity=".65"
+     id="g13">
+    <circle
+       cx="150"
+       cy="150"
+       r="12"
+       id="circle12" />
+    <circle
+       cx="330"
+       cy="150"
+       r="12"
+       id="circle13" />
   </g>
-
   <!-- external leg labels, drawn as small ticks -->
-  <g stroke="#8a6a24" stroke-width="1.2" stroke-linecap="round">
-    <path d="M36 74 l0 12M36 214 l0 12M444 74 l0 12M444 214 l0 12"/>
+  <g
+     stroke="#8a6a24"
+     stroke-width="1.2"
+     stroke-linecap="round"
+     id="g14">
+    <path
+       d="M36 74 l0 12M36 214 l0 12M444 74 l0 12M444 214 l0 12"
+       id="path13" />
   </g>
 </svg>
