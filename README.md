@@ -1,222 +1,698 @@
 # High Energy Physics @ IIT Kanpur — group website
 
-The website of the High Energy Physics group at the Department of Physics,
-Indian Institute of Technology Kanpur.
+The website of the High Energy Physics group, Department of Physics, IIT Kanpur.
 
 **Live site → <https://hepiitk.github.io/website/>**
 
-Plain static HTML and CSS: seven pages, one stylesheet, no framework, no build
-pipeline. GitHub Pages serves the files in `main` exactly as they are, so a
-commit to `main` *is* a deployment.
+The site is plain HTML and CSS, written by **four small Python scripts** in the
+`_source/` folder. The names, photos, news, dates and links sit in simple lists
+inside them. To update a page you edit the list, run the script, and push the
+result to GitHub. About a minute later the live site updates.
+
+This guide is written for a new editor who has never used Git, Python or edited a
+website before. Read Part 1 once to get set up. After that you only need
+Part 2 (the everyday routine) and Part 3 (how to update each page).
 
 ---
 
-## Repository layout
+## Contents
 
-```
-index.html            Home — group blurb, counts, research areas, latest news
-members.html          Faculty · postdocs · graduate students · alumni (live search)
-research.html         The three subgroups, then a gallery of result figures
-seminars.html         Seminar calendar, particle journal club, string journal club
-conferences.html      In-house symposia with posters, conferences & workshops
-news.html             Updates, postdoc positions, PMRF, funding
-contact.html          Group contact details, editor team
-
-assets/style.css      The whole design system (~1250 lines, commented by section)
-assets/app.js         Mobile menu, member search, scroll reveal, count-up
-assets/favicon.svg    Tab icon
-assets/img/*.svg      Seven line drawings made for this site (see below)
-
-assets/Members/       Member portraits              ─┐
-assets/Research/      Result figures                 │  photographs carried over
-assets/News/          Funding-agency logo strip      │  from the old Google Sites
-assets/ConferenceWorkshop/  Symposium posters        │  site
-assets/Home/          Home page photo                │
-assets/Seminars/      Seminars banner               ─┘
-assets/iitk-logo.jpg  Institute emblem in the masthead
-
-_source/build.py      Page generator — all site content lives here
-```
-
-`_source/` is not part of the published site; it holds the generator that
-writes the seven HTML files.
+- [Where everything is](#where-everything-is)
+- [Part 1 — One-time setup](#part-1--one-time-setup)
+- [Part 2 — The everyday routine: pull → edit → build → check → commit → push](#part-2--the-everyday-routine)
+- [Part 3 — How to update each page](#part-3--how-to-update-each-page)
+- [Part 4 — When something goes wrong](#part-4--when-something-goes-wrong)
+- [Part 5 — Quick reference](#part-5--quick-reference)
 
 ---
 
-## Making a change
+## Where everything is
 
-Two routes. Pick whichever suits the edit.
+```
+index.html          Home page
+members.html        Faculty, postdocs, graduate students, alumni
+research.html       Research areas and the "Selected figures" gallery
+seminars.html       Seminar calendar and journal clubs
+conferences.html    In-house symposia, conferences and workshops
+news.html           News, postdoc positions, PMRF fellows, funding
+contact.html        Contact details and the editor team
 
-### A. Small fix — edit the HTML directly
+_source/                  The four scripts that write the pages above
+  build_members.py        → members.html      + refreshes index.html
+  build_news.py           → news.html         + refreshes index.html
+  build_conferences.py    → conferences.html  + refreshes index.html
+  build_all.py            → ALL seven pages. Also holds everything the pages share
+                            (menu, footer, e-mail, phone) and the pages that rarely
+                            change: Home, Research, Seminars, Contact.
 
-Every page is plain, readable HTML. Fixing a typo or a link in
-`members.html` through GitHub's web editor is perfectly fine. Commit to `main`
-and the live site updates in a minute or two.
+assets/style.css    The design: colours, fonts, spacing, layout (all pages share it)
+assets/app.js       Small scripts: mobile menu, member search, animations
+assets/Members/     Member photos, named after the person: arjun-bagchi.webp
+assets/ConferenceWorkshop/   Symposium posters: symposium-2026.webp
+assets/img/         Line drawings used across the site
+.gitignore          Tells Git to ignore Python's __pycache__ folder and Mac .DS_Store files
+```
 
-### B. Anything structural — edit `_source/build.py` and regenerate
+> **The one rule to remember: change the script, not the HTML.**
+> Every time a script runs it **rewrites its page** from the lists inside it.
+> Anything typed straight into that `.html` file is lost. So for `members.html`
+> you edit `_source/build_members.py`, for `news.html` you edit
+> `_source/build_news.py`, and so on.
+>
+> - `_source/` should contain **only these four `.py` files**. Delete any older
+>   ones you find there (`build.py`, `common.py`, `build_index.py`, …).
+> - `styles.css` in the top folder (if it's still there) is left over from the old
+>   site and isn't used. The real stylesheet is **`assets/style.css`**, which is
+>   *not* written by any script, so you edit it directly.
 
-All content lives in named Python lists at the top of that file, and the
-generator writes every page from them. This keeps the seven pages consistent
-and keeps the counts on the home page honest.
+---
+
+## Part 1 — One-time setup
+
+You only do this once per computer.
+
+### 1.1 Get access to the repository
+
+1. Make a free account at <https://github.com> if you don't have one.
+2. Send your GitHub username to a current editor (see [contact.html](https://hepiitk.github.io/website/contact.html))
+   and ask them to give you **write access** to `hepiitk/website`.
+   *They do this on GitHub: the repository → **Settings** → **Collaborators** → **Add people**.*
+3. Accept the invitation from the email GitHub sends you, or at
+   <https://github.com/hepiitk/website/invitations>.
+
+### 1.2 Install the tools
+
+| Tool | What it's for | Get it |
+|---|---|---|
+| **Git** | Tracks changes and talks to GitHub | <https://git-scm.com/downloads>. On Windows, accept all the defaults in the installer. |
+| **VS Code** | The editor you'll work in | <https://code.visualstudio.com> |
+| **Python 3** | Runs the page scripts | <https://www.python.org/downloads/>. On Windows, **tick "Add python.exe to PATH"** on the first installer screen. |
+
+Nothing else is needed. The scripts use only what comes with Python.
+
+Check they work: open a terminal (in VS Code, **Terminal → New Terminal**) and run
+
+```bash
+git --version
+python3 --version
+```
+
+Each should print a version number. On macOS, if `git` asks to install the
+developer tools, click **Install**. **On Windows**, type `python` (or `py`)
+instead of `python3`, here and everywhere else in this guide.
+
+**Recommended VS Code extensions.** Open the **Extensions** panel (the
+four-squares icon on the left, or `Ctrl+Shift+X`, `Cmd+Shift+X` on Mac) and install:
+
+- **Python** (by Microsoft): colours the scripts and underlines mistakes in red.
+- **Live Server** (by Ritwick Dey): shows the pages in your browser and refreshes them as they change.
+
+### 1.3 Tell Git who you are
+
+Git labels every change with a name and email. In the VS Code terminal, run
+these two lines with your own details:
+
+```bash
+git config --global user.name  "Your Name"
+git config --global user.email "your-email@iitk.ac.in"
+```
+
+Use the same email as your GitHub account if you can. Your commits then show up
+on your GitHub profile.
+
+### 1.4 Download (clone) the website to your computer
+
+1. Open VS Code.
+2. Click the **Source Control** icon on the left: three dots joined by lines, or
+   `Ctrl+Shift+G`.
+3. Click **Clone Repository**. Alternatively, press `Ctrl+Shift+P` (`Cmd+Shift+P`
+   on Mac), type **Git: Clone** and press Enter.
+4. Paste this address and press Enter:
+   ```
+   https://github.com/hepiitk/website.git
+   ```
+5. Choose a folder to keep it in, for example `Documents`. A folder called
+   `website` is created there.
+6. When VS Code asks **"Would you like to open the cloned repository?"**, click **Open**.
+7. The first time you push, VS Code asks you to **sign in to GitHub**. Click
+   **Allow**, finish the sign-in in your browser, then come back to VS Code.
+
+You now have your own copy of the site. You won't need to clone again.
+
+---
+
+## Part 2 — The everyday routine
+
+Every time you update the site, follow these six steps in this order.
+
+```
+ 1. PULL  →  2. EDIT   →  3. BUILD   →  4. CHECK   →  5. COMMIT  →  6. PUSH
+ (get the    (change the   (run the     (look at it   (save a       (send it to
+  latest)     script)       script)      in a browser) snapshot)     GitHub)
+```
+
+### Step 1 — Pull: get the latest version first
+
+Other editors may have changed the site since you last worked on it. Always pull
+before you start, or you'll end up editing an old copy.
+
+- In VS Code, open the **website** folder (**File → Open Recent**).
+- Go to **Source Control** → click **⋯** (*Views and More Actions*) at the top of the panel → **Pull**.
+- Or click the **circular arrows** next to the branch name `main` in the bottom-left status bar.
+
+### Step 2 — Edit the page's script
+
+In the **Explorer** panel (the two-pages icon), open the `_source` folder and then
+the script for the page you want to change, for example `build_members.py` for
+the Members page. Each script starts with a short note explaining every field,
+followed by the lists you edit, under headings like:
+
+```python
+# ==========================================================================
+# GRADUATE STUDENTS
+# ==========================================================================
+```
+
+Part 3 shows exactly what to change for each task. Save with `Ctrl+S` (`Cmd+S` on Mac).
+
+> Lower down, under *"PAGE LAYOUT — you rarely need to change anything below"*,
+> is the code that turns the lists into HTML. You don't need to touch it to
+> add people, news or events.
+
+### Step 3 — Build: run the script
+
+In the VS Code terminal (**Terminal → New Terminal**; it opens in the `website`
+folder), run the script you edited:
+
+```bash
+python3 _source/build_members.py
+```
+
+It prints which pages it wrote: its own page, and then the Home page, which
+shows the member counts, the latest news and the research areas:
+
+```
+wrote members.html (74 KB)
+wrote index.html (15 KB)
+```
+
+**Even easier:** with the script open in VS Code, click the **▶ Run Python File**
+button at the top right of the editor. It does the same thing.
+
+Edited `build_all.py`, or not sure which script to run? `python3 _source/build_all.py`
+rebuilds all seven pages. It's always safe.
+
+If you see an error instead of `wrote …`, nothing was changed. See
+[Python errors](#a-python-error-appeared-when-i-ran-a-script) in Part 4.
+
+### Step 4 — Check it in the browser
+
+Never push a change you haven't looked at.
+
+- **With Live Server:** right-click the `.html` file in the Explorer → **Open with
+  Live Server**. A browser tab opens. Each time you re-run the script, it refreshes.
+- **Without it:** find the file in your file manager and double-click it to open it in your browser.
+
+Check that:
+
+- the page looks right and nothing has shifted or disappeared,
+- any new photo appears (not just the person's initials),
+- any new links open the right page.
+
+> The Google calendar and schedule sheets only load when you're online. If they
+> look blank in your preview while you're offline, that's normal.
+
+### Step 5 — Commit: save a labelled snapshot
+
+1. Open **Source Control** (`Ctrl+Shift+G`). Your changed files are listed under
+   **Changes**. You should see **both** the script you edited (e.g.
+   `_source/build_members.py`) **and** the page(s) it wrote (e.g. `members.html`,
+   `index.html`). Commit them together.
+2. **Click each file** to see exactly what changed: red is removed, green is
+   added. Make sure you only changed what you meant to.
+3. Hover over **Changes** and click **+** (*Stage All Changes*). The files move to **Staged Changes**.
+4. Type a short message in the box at the top saying **what** you changed, e.g.
+   - `Add Priya Nair to graduate students`
+   - `News: Humboldt fellowship for Upalaparna Banerjee`
+   - `Add 2027 symposium`
+5. Click **✓ Commit**.
+
+> **Only a `.py` file changed, and no `.html`?** You forgot Step 3. Run the
+> script, then stage the `.html` files too. GitHub publishes the `.html` files,
+> not the scripts.
+
+### Step 6 — Push: publish it
+
+After committing, the blue button changes to **Sync Changes ↑1**. Click it.
+This pushes your commit to GitHub and also pulls anything new.
+
+Then check that it's live:
+
+1. Go to <https://github.com/hepiitk/website> and wait for the small **yellow dot**
+   next to the latest commit to turn into a **green tick ✓**. That takes about 1–2 minutes.
+2. Open <https://hepiitk.github.io/website/> and do a **hard refresh**
+   (`Ctrl+Shift+R`, or `Cmd+Shift+R` on Mac) so your browser doesn't show an old copy.
+
+That's the whole routine.
+
+---
+
+## Part 3 — How to update each page
+
+### 3.0 Reading the lists: just enough Python
+
+The data in the scripts looks like this. You only need these few rules:
+
+```python
+STUDENTS = [                                  # a list starts with [
+    {                                         # one person = one { … } block
+        "name": "Abhijit Kishore",            # "field": value,
+        "photo": "abhijit-kishore.webp",
+        "web": None,
+        "inspire": "2870898",
+    },                                        # the block ends with },
+    {
+        "name": "Ankit Gill",
+        …
+    },
+]                                             # … and the list ends with ]
+```
+
+- **Text goes in double quotes:** `"Priya Nair"`. Keep both quote marks.
+- **Every line is `"field": value,`.** Keep the field name exactly as it is
+  (lowercase), the **colon** after it, and the **comma** at the end.
+- **`None`** (capital N, no quotes) means "nothing here", e.g. no personal website.
+- **`True` / `False`** (capital first letter, no quotes) switch something on or off.
+- **Every block ends with `},`**, including the last one. A missing comma is the most common mistake.
+- **Lines starting with `#` are notes** for humans. Python ignores them.
+- **Write `&` as `&amp;`** inside text (e.g. `"Cosmology &amp; astroparticle physics"`),
+  because the text goes into HTML.
+- **The order in the list is the order on the page.**
+- **The safest way to add anything:** copy an existing block, paste it where the
+  new one should go, and change only the text inside the quotes.
+
+---
+
+### 3.1 Members — `_source/build_members.py`
+
+Builds `members.html`, then refreshes `index.html`. The member counts on both
+pages (*"14 faculty, 8 postdoctoral fellows…"* and the big numbers on the Home
+page) are **counted automatically**. You never type them.
+
+Everything about a person (name, photo, links, interests) is in **their own
+`{ … }` block**. There is no separate photo list.
+
+#### Add a graduate student or postdoc
+
+1. Put their photo in `assets/Members/`, named after them: `priya-nair.webp`
+   (see [3.6](#36-photos-and-images)).
+2. Find the `GRADUATE STUDENTS` heading (or `POSTDOCTORAL FELLOWS`), copy any
+   block, paste it where the new person should appear, and fill it in:
+
+```python
+    {
+        "name": "Priya Nair",
+        "photo": "priya-nair.webp",
+        "web": "https://home.iitk.ac.in/~priya/",
+        "inspire": "2912345",
+    },
+```
+
+| Field | What to put | If there's nothing |
+|---|---|---|
+| `"name"` | Full name, exactly as it should appear | — |
+| `"photo"` | Just the **file name** of the picture in `assets/Members/` (not the folder) | `None` → their initials are shown |
+| `"web"` | Personal web page, starting with `https://` | `None` → no globe icon |
+| `"inspire"` | Just the number from their INSPIRE profile address (`inspirehep.net/authors/`**`2912345`**), or a full `https://…` link to any publication list | `None` → no publications icon |
+
+3. Run `python3 _source/build_members.py`.
+
+A new student with no photo and no links yet is simply:
+
+```python
+    {
+        "name": "Priya Nair",
+        "photo": None,
+        "web": None,
+        "inspire": None,
+    },
+```
+
+#### Add a faculty member
+
+Faculty blocks (under the `FACULTY` heading) have one more field, the interests:
+
+```python
+    {
+        "name": "Priya Nair",
+        "photo": "priya-nair.webp",
+        "web": "https://home.iitk.ac.in/~priya/",
+        "inspire": "1234567",
+        "interests": "Neutrino physics, detector development.",
+    },
+```
+
+The search box on the page searches both the name and the interests automatically.
+
+#### Add or change someone's photo
+
+Put the picture in `assets/Members/` and write its file name in that person's
+`"photo"` field. To replace a photo, either overwrite the old file with a new
+picture of **the same name** (no script needed), or add the new file and change
+`"photo"`.
+
+#### Someone finishes their PhD, or leaves
+
+1. **Delete** their whole `{ … },` block from `STUDENTS` (or `POSTDOCS` / `FACULTY`).
+2. **Add** a line under the `ALUMNI` heading, in the position you want on the page:
+   ```python
+       {"name": "Priya Nair", "role": "PhD 2026", "now": "Postdoc, University of Bonn, Germany."},
+   ```
+   If their next position isn't known yet, write `"now": ""`. The page shows `—`.
+3. Their photo file can stay in `assets/Members/`. Alumni are listed without photos.
+4. Run `python3 _source/build_members.py`.
+
+#### Change someone's interests, links or name
+
+Search for their name (`Ctrl+F`), edit the text in the quotes, and run the script.
+
+---
+
+### 3.2 News — `_source/build_news.py`
+
+Builds `news.html`, then refreshes `index.html` (the Home page shows the
+**4 newest** items automatically).
+
+#### Add a news item
+
+Find `NEWS = [` and paste a new block **at the top**, because the list is newest first:
+
+```python
+NEWS = [
+    {
+        "tag": "Award",
+        "title": "Humboldt Research Fellowship for Upalaparna Banerjee",
+        "body": "Upalaparna Banerjee has been awarded a Humboldt Research Fellowship "
+                "for postdocs. Congratulations, Upala!",
+        "link": None,
+    },
+    {
+        "tag": "Symposium",
+        …the older items stay below…
+```
+
+- `"tag"`: the small label above the title: *Symposium*, *New faculty*, *Award*, *Placement*…
+- `"body"`: a long text can be split across lines like above. Each piece in its own
+  quotes, with a **space before the closing quote** so words don't run together.
+- `"link"`: `None`, or a button under the item written as `("address", "button text")`, e.g.
+  ```python
+          "link": ("conferences.html#symposium-2027", "Schedule and details"),
+  ```
+
+#### PMRF fellows
+
+`PMRF = ["Amartya Saha", "Subrata Samanta", "Aryabrat Mahapatra"]`. Add or remove
+a name in quotes, separated by commas.
+
+#### Postdoc positions text
+
+The *Postdoctoral positions* paragraph is written inside `build()` lower down.
+Search for `Postdoctoral positions` and edit the sentences or the link there.
+
+---
+
+### 3.3 Conferences and symposia — `_source/build_conferences.py`
+
+Builds `conferences.html`, then refreshes `index.html`.
+
+#### Add next year's in-house symposium
+
+1. Put the poster in `assets/ConferenceWorkshop/`, named `symposium-2027.webp`.
+2. In `SYMPOSIA = [`, copy the **first** `{ … },` block and paste it **above** it:
+
+```python
+SYMPOSIA = [
+    {
+        "year": "2027",
+        "poster": "symposium-2027.webp",
+        "title": "In-House Symposium 2027",
+        "dates": "29 &amp; 30 January 2027",
+        "body": "The HEP group at IIT Kanpur is organising an in-house symposium. Join us!",
+        "sheet": "1AbCdEfGhIjKlMnOpQrStUvWxYz0123456789abcdef",
+        "gid": None,
+        "highlight": True,
+        "open": False,
+    },
+    {
+        "year": "2026",
+        …
+        "highlight": False,      ← switch the previous year's highlight off
+```
+
+| Field | Meaning |
+|---|---|
+| `year` | Shown in the badge. Also makes the page address `conferences.html#symposium-2027`, which news items can link to. |
+| `poster` | Just the **file name** of the poster in `assets/ConferenceWorkshop/`. Clicking the poster opens it full size. |
+| `dates` | Free text; write `&` as `&amp;`. |
+| `sheet` | The programme's Google Sheet ID: the long code in its address, `docs.google.com/spreadsheets/d/`**`THIS-PART`**`/edit`. |
+| `gid` | If the programme is on a **later tab** of the sheet, the number after `#gid=` in the address, in quotes (`"1929783250"`). Otherwise `None`. |
+| `highlight` | `True` gives the badge the maroon colour. Use it for the newest edition only. |
+| `open` | `True` shows the programme unfolded when the page opens; `False` keeps it behind the **Show the programme** button. |
+
+> The schedule sheet must be shared on Google as **"Anyone with the link — Viewer"**,
+> or it shows up blank on the site.
+
+#### Add a conference or workshop
+
+In `CONFERENCES = [`, add a line (newest first):
+
+```python
+    ("Strings Attached 3.0", "2027",
+     "The third edition of the group's string theory meeting.",
+     "https://sites.google.com/view/…"),
+```
+
+The four parts are: name, year, one-line description, meeting website.
+
+---
+
+### 3.4 Home, Research, Seminars, Contact, menu and footer — `_source/build_all.py`
+
+These change rarely, so they live together in `build_all.py`, along with the
+parts every page shares. The file is divided into numbered sections; use
+`Ctrl+F` to jump to one. **After any change in this file, run
+`python3 _source/build_all.py`**, which rebuilds all seven pages.
+
+| To change… | Look in section | What to edit |
+|---|---|---|
+| Group e-mail, phone, site name, the menu | **1. SITE-WIDE SETTINGS** | `EMAIL`, `PHONE`, `SITE_NAME`, `NAV` (they appear on every page) |
+| Home page photo or welcome text | **4. HOME PAGE** | `HERO_PHOTO`, and the text inside `build_index()` |
+| Research topics or faculty per area | **5. RESEARCH PAGE** | In `THRUSTS`, one `{ … }` per subgroup: `"topics": [ … ]` (one topic per line, in quotes, comma after each), `"members": [ … ]`, `"blurb"`. Leave `id`, `art`, `accent`, `icon` as they are. |
+| *Selected figures* gallery | **5. RESEARCH PAGE** | `RESEARCH_FIGURES`: one figure is `("Research/file.webp", "Short title", "Caption or empty"),`, with the image in `assets/Research/` |
+| Seminars page text or links | **6. SEMINARS PAGE** | the text inside `build_seminars()` |
+| Editor team | **7. CONTACT PAGE** | `EDITORS`: one editor is `("Name", "email@iitk.ac.in"),` |
+
+The Home page's member counts, latest news and research areas are filled in
+automatically from the other files, so you don't edit those here.
+
+> **Seminars** themselves come from the group's Google Calendar
+> (`hepiitk@gmail.com`). To add or change a seminar, **edit the Google Calendar,
+> not the website**. The page picks it up automatically.
+
+---
+
+### 3.5 Colours, fonts, spacing and animations
+
+All the design lives in **`assets/style.css`**. No script writes this file, so
+you edit it directly and nothing needs rebuilding. Every colour is defined once
+at the top, in the `:root { … }` block, so changing a value there changes it
+everywhere. For example, `--maroon: #7d1f2c;` is the main accent colour. Change
+the design only if you're comfortable with CSS, and always preview several pages
+before pushing.
+
+---
+
+### 3.6 Photos and images
+
+1. Prepare the image:
+   - **Member portraits:** crop to a **4:5 portrait** (e.g. 600 × 750 px) with the face in the upper part.
+   - **File type:** `.webp` (smallest) or `.jpg`. Aim for under ~150 KB.
+     <https://squoosh.app> converts and shrinks images for free in the browser.
+2. **Name it after the person or event, in lowercase, with hyphens and no spaces**:
+   `priya-nair.webp`, `symposium-2027.webp`. All existing files follow this pattern,
+   so you can always tell whose photo a file is.
+3. Put it in the right folder (`assets/Members/` for people,
+   `assets/ConferenceWorkshop/` for posters). You can drag it into that folder in
+   the VS Code Explorer.
+4. Write **exactly** that file name in the `"photo"` / `"poster"` field and re-run the script.
+
+> ⚠️ **Capital letters matter on the live site.** GitHub Pages treats
+> `Priya-Nair.webp` and `priya-nair.webp` as **different files**, even though
+> your own computer may not. If a photo shows on your computer but only
+> **initials** show on the live site, check the capital letters and the
+> extension (`.webp` vs `.jpg`) in both the file name and the script.
+
+Remember to **commit the image file too**. It appears under **Changes** with a **U** (untracked).
+
+---
+
+### 3.7 Editing an `.html` file directly (only for an emergency fix)
+
+You *can* fix a typo straight in an `.html` file (or with the pencil ✏️ on
+GitHub). It works, but **it will be overwritten** the next time anyone runs that
+page's script. If you do it, make the **same change in the script** in the same
+commit, so nothing is lost later.
+
+---
+
+## Part 4 — When something goes wrong
+
+### "A Python error appeared when I ran a script"
+
+Nothing was written, so the site is unchanged. Python tells you the **file** and
+**line number**: `File "_source/build_members.py", line 112`. Go to that line
+(`Ctrl+G` in VS Code) and look at it **and the line above it**.
+
+| The error says | Usually means |
+|---|---|
+| `SyntaxError: invalid syntax. Perhaps you forgot a comma?` | A missing **comma** at the end of a `"field": value` line, or after the `}` that closes a block |
+| `SyntaxError: ':' expected after dictionary key` | A missing **colon** between a field and its value: `"photo": "priya-nair.webp",` |
+| `SyntaxError: unterminated string literal` | A missing **quote mark** `"` |
+| `SyntaxError: closing parenthesis ']' does not match …` or `'{' was never closed` | A missing `}`, `)` or `]` |
+| `NameError: name 'none' is not defined` | `None`, `True`, `False` must start with a capital letter |
+| `KeyError: 'name'` (or another field) | A block is missing that field, or its name is misspelt (`"Name"` instead of `"name"`). Copy a complete block. |
+| `ValueError: not enough values to unpack` | A `( … )` line in `CONFERENCES` or `EDITORS` has too few parts |
+
+For the last two, the line number points into the page-building code lower
+down. The real mistake is in the entry you just added.
+
+The red squiggly underline from the **Python** extension usually points at the problem before you even run it.
+
+### "`python3` is not recognised / command not found"
+
+On Windows, use `python` or `py` instead of `python3`. If none work, re-install
+Python and tick **"Add python.exe to PATH"**. Then **close and reopen VS Code**.
+
+### "My change disappeared"
+
+Someone ran a script after you edited the `.html` file directly, so the page was
+rewritten. Make the change in the script instead. See [3.7](#37-editing-an-html-file-directly-only-for-an-emergency-fix).
+The old text is still in GitHub's **History** for that file.
+
+### "I made a mess of a file and haven't committed yet"
+
+**Source Control** → right-click the file under **Changes** → **Discard Changes**.
+The file goes back to the last committed version. Do it for the `.py` and the
+`.html` files.
+
+### "I committed but haven't pushed yet, and want to undo it"
+
+**Source Control** → **⋯** → **Commit** → **Undo Last Commit**. Your edits stay in
+the files, so you can fix them and commit again.
+
+### "I already pushed a mistake"
+
+Fix the script, run it, then commit and push again as usual. That's the simplest
+way. Every earlier version is kept on GitHub (open the file on GitHub → **History**),
+so nothing is ever truly lost.
+
+### "Push was rejected" / "Updates were rejected because the remote contains work…"
+
+Someone else pushed while you were working. Click **⋯ → Pull**, then **Sync
+Changes** again. Usually that's all it takes.
+
+### "Merge conflict"
+
+This happens when you and another editor changed the **same lines**. VS Code
+marks the file with a **!** and shows both versions:
+
+- **Current Change** = yours, **Incoming Change** = theirs.
+- In the **script**, click **Accept Current**, **Accept Incoming** or **Accept Both**
+  above each conflict, or edit the text by hand so the list is right.
+- For a conflict in a **generated `.html` file**, don't edit it by hand: fix the
+  script, then run it again. That rewrites the page cleanly.
+- Save, **Stage** (**+**), **Commit**, then **Sync Changes**.
+
+To avoid conflicts: **pull before you start**, keep each change small, and
+**push as soon as you're done**.
+
+### "My change isn't showing on the live site"
+
+1. Did you run the script, and commit the **`.html`** file, not just the `.py`?
+2. On <https://github.com/hepiitk/website>, check that your commit is there with a **green tick ✓**.
+   A **red ✗** means publishing failed: click it to see why, or ask another editor.
+3. Hard-refresh the page: `Ctrl+Shift+R` (`Cmd+Shift+R` on Mac).
+4. Wait two minutes and try again.
+
+### "A photo shows only initials"
+
+Either the person's `"photo"` is `None`, the file name there doesn't match the
+file, or the file isn't in `assets/Members/`. Check the spelling, the **capital
+letters** and the **extension**. See [3.6](#36-photos-and-images).
+
+---
+
+## Part 5 — Quick reference
+
+### Which script do I run?
+
+| I changed… | Run |
+|---|---|
+| people, photos, alumni | `python3 _source/build_members.py` |
+| news, PMRF, positions | `python3 _source/build_news.py` |
+| symposia, conferences | `python3 _source/build_conferences.py` |
+| anything in `build_all.py` (menu, footer, e-mail, phone, Home, Research, Seminars, Contact), or not sure | `python3 _source/build_all.py` |
+| `assets/style.css` | nothing, just save |
+
+The first three also refresh the Home page (`index.html`) every time.
+
+### The routine in VS Code
+
+| Step | Where |
+|---|---|
+| Pull | Source Control → **⋯** → **Pull** |
+| Build | open the script → **▶ Run Python File**, or type the command in the terminal |
+| Preview | right-click an `.html` file → **Open with Live Server** |
+| See your changes | Source Control → click a file under **Changes** |
+| Stage | **+** next to **Changes** |
+| Commit | type a message → **✓ Commit** |
+| Push | **Sync Changes** |
+
+### The same thing in a terminal
+
+Run these in the `website` folder (VS Code: **Terminal → New Terminal**):
+
+```bash
+git pull                                   # 1. get the latest
+# … edit the script and save …
+python3 _source/build_members.py           # 2. rebuild the page
+git status                                 # see which files changed
+git diff                                   # see exactly what changed (press q to quit)
+git add .                                  # 3. stage everything you changed
+git commit -m "Add Priya Nair to students" # 4. commit with a message
+git push                                   # 5. publish
+git log --oneline -5                       # the last five commits
+```
+
+Download the site on a new computer:
 
 ```bash
 git clone https://github.com/hepiitk/website.git
-cd website
-python3 _source/build.py        # rewrites the seven .html files
-python3 -m http.server 8000     # then open http://localhost:8000
 ```
 
-Commit the regenerated `.html` files together with your change to
-`build.py`.
+### Before you push — checklist
 
-| To change… | Edit |
-|---|---|
-| Faculty (name, homepage, INSPIRE id, interests) | `FACULTY` |
-| Postdocs, graduate students | `POSTDOCS`, `STUDENTS` |
-| Alumni (name, degree + year, current position) | `ALUMNI` |
-| Which portrait belongs to whom | `PHOTOS` |
-| Research subgroups, topic lists, accent colour | `THRUSTS` |
-| In-house symposia (dates, poster, schedule sheet) | `SYMPOSIA` |
-| Other conferences and workshops | `CONFERENCES` |
-| News items | `NEWS` |
-| PMRF fellows, editor team | `PMRF`, `EDITORS` |
-| Banners, home photo, research figures, funding strip | `BANNERS`, `HERO_PHOTO`, `RESEARCH_FIGURES`, `NEWS_FUNDERS_IMG` |
-| The drawn illustrations and where they appear | `ART`, `PAGE_ART` |
-
-### Worked examples
-
-**A new graduate student.** Two lines — one in `STUDENTS`, one in `PHOTOS`:
-
-```python
-STUDENTS = [
-    ...
-    ("Priya Nair", None, "2912345"),        # name, personal site, INSPIRE author id
-]
-
-PHOTOS = {
-    ...
-    "Priya Nair": "priya-nair.jpg",         # file goes in assets/Members/
-}
-```
-
-Only the INSPIRE **author id** is needed — the full citation-summary URL is
-built automatically. Use `None` for a missing personal page or INSPIRE profile;
-the Publications chip is then shown greyed out rather than linking nowhere. The
-"40 graduate students" figure on the home page and in the section heading is
-counted from the list, so it can never drift.
-
-**A news item.** Newest first, at the top of `NEWS`:
-
-```python
-{
-    "tag": "Award",
-    "title": "Humboldt Fellowship for …",
-    "body": "One or two sentences. &amp; for an ampersand.",
-    "link": None,                            # or ("conferences.html#symposium-2026", "Schedule")
-},
-```
-
-The four most recent items also appear on the home page automatically.
-
-**Someone finishing their PhD.** Move their tuple from `STUDENTS` to `ALUMNI`
-with the year and where they have gone:
-
-```python
-("Priya Nair", "PhD 2026", "Postdoc, University of Bonn, Germany."),
-```
-
----
-
-## Images
-
-Photographs live in the `assets/` subfolders listed above, under the filenames
-the pages reference. **Every image degrades gracefully** — each one carries a
-failure handler, so a file that is missing or misnamed removes itself instead of
-leaving a broken-image icon:
-
-| Missing file | What a visitor sees |
-|---|---|
-| A member portrait | The person's initials in a framed box, same size |
-| `assets/iitk-logo.jpg` | The drawn atom mark in the masthead |
-| The home page photo | A line engraving of a detector with collision tracks |
-| A page banner | No banner, and no gap |
-| A symposium poster | The entry without its poster |
-| Every research figure | The "Selected figures" section disappears entirely |
-| The funding strip | Dashed agency-name placeholders |
-
-So images can be added or replaced one at a time without ever breaking the
-site.
-
-### The drawn artwork (already in the repo)
-
-Seven original line drawings in `assets/img/`, in the site's own ink-and-maroon
-palette. Nothing to download, nothing to license:
-
-| File | Where it appears |
-|---|---|
-| `theory.svg` — one-loop Feynman diagram | Home card and Particle Theory panel |
-| `experiment.svg` — detector barrel with jet cones | Home card and Particle Experiments panel |
-| `string.svg` — AdS cylinder with a bulk geodesic | Home card and String Theory panel |
-| `seminar.svg` — blackboard and lectern | Seminars masthead |
-| `symposium.svg` — auditorium and screen | Conference / Workshop masthead |
-| `news.svg` — noticeboard | News masthead |
-| `contact.svg` — letter and department building | Contact masthead |
-
-To put a photograph in place of one, drop it in `assets/img/` and change the
-path in `ART` in `_source/build.py`.
-
----
-
-## Embedded Google content
-
-The seminar calendar and every symposium schedule are live embeds pointing at
-the group's existing Google Calendar and Sheets — nothing was re-uploaded. They
-must stay shared as **"anyone with the link can view"** or they will render
-blank for visitors.
-
----
-
-## Design and accessibility notes
-
-- **Design tokens.** Every colour, type step, space step and radius is a CSS
-  custom property in `:root` in `assets/style.css`. Changing `--maroon`
-  re-tints the whole site; `--paper` sets the paper tone.
-- **Typography.** EB Garamond for display, Source Serif 4 for text, Inter for
-  the small uppercase labels, loaded from Google Fonts with Georgia/system
-  fallbacks — the site stays fully legible if that request is blocked.
-- **Member photographs are large**, as on the old site: faculty portraits at 4:5
-  beside their interests, and postdocs and students as a photo wall six across
-  on a wide screen.
-- **Accessibility.** Skip link, one `<h1>` per page, ordered headings, visible
-  focus rings, `prefers-reduced-motion` honoured, keyboard-dismissable mobile
-  menu, `alt` text on every image, and all text at 4.5:1 contrast or better.
-- **Print.** A dedicated print stylesheet drops the navigation, banners and
-  embeds, prints link targets in parentheses, and keeps member entries from
-  splitting across pages — so the member list and schedules print cleanly.
-- **JavaScript is optional.** `assets/app.js` only adds the mobile menu, the
-  member search, the reveal animation and the count-up. With JS disabled
-  everything is still present and readable.
-
----
-
-## Housekeeping
-
-- [ ] `styles.css` in the repository root is left over from the previous site
-      and is not referenced by any page — safe to delete.
-- [ ] Add an empty `.nojekyll` file at the root. GitHub Pages runs Jekyll by
-      default, which skips folders beginning with an underscore and may
-      reinterpret braces in page content; `.nojekyll` turns that off and
-      publishes the files verbatim.
-- [ ] The postdoc advertisement on `news.html` still describes the 2022–23
-      round (as the old site did) and says so explicitly — update the text and
-      the portal link when the next call opens.
-- [ ] A few alumni entries have no current position recorded.
+- [ ] I pulled before I started.
+- [ ] I edited the **script**, not the `.html` file, and I **ran** it with no errors.
+- [ ] I previewed the page in a browser and it looks right.
+- [ ] New photos show (not initials), and file names are lowercase with the right extension.
+- [ ] I'm committing the `.py` file, the `.html` file(s) it wrote, and any new images.
+- [ ] My commit message says what I changed.
 
 ---
 
 ## Maintainers
 
-The site is maintained by the group's editor team — see
-[contact.html](https://hepiitk.github.io/website/contact.html). For
-corrections, new publications or news items, write to
-**hepiitk@gmail.com**, or open an issue or pull request here.
+The site is maintained by the group's editor team. See
+[contact.html](https://hepiitk.github.io/website/contact.html). Questions,
+corrections and news go to **hepiitk@gmail.com**.
