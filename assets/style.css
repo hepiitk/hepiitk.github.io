@@ -425,7 +425,7 @@ code, kbd, samp {
 }
 @media (max-width: 900px) {
   .hero__grid { grid-template-columns: 1fr; }
-  .hero__art { order: -1; }
+  .hero__art { order: -1; max-width: 26rem; margin-inline: auto;}
 }
 .hero h1 { color: var(--ink-hi); }
 .hero h1 em {
