@@ -30,8 +30,7 @@ NEWS = [
     {
         "tag": "Symposium",
         "title": "In-House Symposium 2026",
-        "body": "The HEP group at IIT Kanpur is organising an in-house symposium on "
-                "31 January &amp; 1 February 2026. Join us!",
+        "body": "The group's in-house symposium was held on 31 January &amp; 1 February 2026.",
         "link": ("conferences.html#symposium-2026", "Schedule and details"),
     },
     {
