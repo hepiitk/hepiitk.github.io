@@ -271,8 +271,8 @@ STUDENTS = [
         "inspire": None,
     },
     {
-        "name": "Puskhar Soni",
-        "photo": "puskhar-soni.webp",
+        "name": "Pushkar Soni",
+        "photo": "pushkar-soni.webp",
         "web": None,
         "inspire": "2801474",
     },
