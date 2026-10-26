@@ -266,6 +266,18 @@ code, kbd, samp {
   margin: 0.06em 0.12em 0 0;
 }
 
+/* Home page research cards: topics as one quiet line instead of boxes */
+.card__topics {
+  margin: var(--sp-4) 0 0;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-ui);
+  font-size: var(--step--2);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--ink-low);
+}
+
 /* ---------- 4. Masthead & navigation ------------------------------------- */
 .skip-link {
   position: absolute;
@@ -425,13 +437,18 @@ code, kbd, samp {
 }
 @media (max-width: 900px) {
   .hero__grid { grid-template-columns: 1fr; }
-  .hero__art { order: -1; max-width: 26rem; margin-inline: auto;}
+  /* one column (tablet / phone): heading and text first, the animation below */
+  .hero__art { order: 0; max-width: 24rem; margin-inline: auto; margin-top: var(--sp-2); }
 }
-.hero h1 { color: var(--ink-hi); }
+.hero h1 {
+  color: var(--ink-hi);
+  font-size: var(--step-4);          /* a little smaller than other pages' h1 */
+}
 .hero h1 em {
   font-style: italic;
   color: var(--maroon);
 }
+.hero .lede { font-size: clamp(1.02rem, 0.98rem + 0.22vw, 1.16rem); }
 .hero__rule {
   width: 4.5rem;
   height: 2px;
@@ -440,7 +457,7 @@ code, kbd, samp {
 }
 .hero__actions { margin-top: var(--sp-6); }
 
-/* Hero art: the group photo when present, a drawn detector otherwise */
+/* Hero art: the group photo when present, the animation otherwise */
 .hero__art { position: relative; width: 100%; }
 .hero__art img {
   width: 100%;
@@ -455,21 +472,17 @@ code, kbd, samp {
 .hero__art:has(img[data-failed]) figcaption { display: none; }
 .hero__art figcaption { text-align: right; }
 
-.detector-ring { animation: spin 60s linear infinite; transform-origin: 50% 50%; }
-.detector-ring--rev { animation-direction: reverse; animation-duration: 80s; }
-.trace { stroke-dasharray: 1 260; animation: trace 6.5s var(--ease) infinite; }
-.trace:nth-of-type(2n) { animation-delay: 0.7s; }
-.trace:nth-of-type(3n) { animation-delay: 1.5s; }
-.trace:nth-of-type(5n) { animation-delay: 2.3s; }
+/* Home page animation (assets/merger.js): no frame or background of its own */
+.merger {
+  position: relative;
+  width: min(100%, 32rem);
+  margin-inline: auto;
+  aspect-ratio: 1;
+}
+.merger canvas { display: block; width: 100%; height: 100%; }
+.hero__art:has(img:not([data-failed])) .merger { display: none; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes trace {
-  0% { stroke-dasharray: 0 260; opacity: 0; }
-  14% { opacity: 0.9; }
-  70% { stroke-dasharray: 190 260; opacity: 0.8; }
-  100% { stroke-dasharray: 260 260; opacity: 0; }
-}
-
 /* ---------- 6. Components ------------------------------------------------ */
 
 /* Buttons */
@@ -592,7 +605,8 @@ code, kbd, samp {
   color: color-mix(in srgb, var(--accent) 88%, #000);
 }
 .pill-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 0; padding: 0; }
-.pill-list li { margin: 0; }
+.pill-list li { margin: 0; max-width: 100%; }
+.pill-list .pill { max-width: 100%; white-space: normal; }  /* long topics wrap instead of overflowing */
 
 /* Person card — large portrait, name, interests.
    Portraits are deliberately big (4:5, ~10rem wide) to match the old site,
@@ -1015,7 +1029,7 @@ code, kbd, samp {
 }
 .card__art img {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 8 / 5;
   object-fit: contain;   /* line drawings must not be cropped */
 }
 
@@ -1113,17 +1127,162 @@ code, kbd, samp {
 }
 .banner:has(img[data-failed]) { display: none; }
 
-/* If not one gallery image resolved, the whole band goes away rather than
-   leaving an empty "Selected figures" heading behind. */
-#figures:not(:has(.gallery img:not([data-failed]))) { display: none; }
-
-/* Figure gallery (research results) */
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
-  gap: var(--sp-5);
+/* Figure slideshow inside each research area (research.py + assets/carousel.js).
+   Without JavaScript it is a swipeable strip; the script adds autoplay,
+   the dots, the counter and the buttons. Colours follow the area's accent. */
+.carousel {
+  container-type: inline-size;
+  margin-bottom: var(--sp-5);
 }
-.gallery .figure img { aspect-ratio: 4 / 3; object-fit: contain; }
+.carousel__track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-sm);
+  background: var(--card);
+}
+.carousel__track::-webkit-scrollbar { display: none; }
+.carousel__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.carousel__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.slide { margin: 0; height: 100%; display: flex; flex-direction: column; }
+.slide__img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 3 / 2;
+  padding: var(--sp-3);
+  background: #fff;
+  border-bottom: 1px solid var(--rule);
+}
+.slide__img img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+.slide__cap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: var(--sp-4);
+}
+.slide__text { margin: 0; font-size: var(--step--1); line-height: 1.5; color: var(--ink); }
+.slide__paper {
+  margin-top: auto;
+  padding-top: var(--sp-1);
+  font-size: var(--step--2);
+  line-height: 1.45;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 3px;
+}
+.slide__paper:hover { color: var(--accent); text-decoration-color: currentColor; }
+.slide__paper span {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color: var(--ink-low);
+  white-space: nowrap;
+}
+
+.carousel__controls { display: none; }
+.carousel.is-ready .carousel__controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3) var(--sp-4);
+  margin-top: var(--sp-3);
+}
+.carousel__dots { display: flex; align-items: center; gap: 0.45rem; }
+.carousel__dot {
+  position: relative;
+  width: 0.45rem;
+  height: 0.45rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--rule-strong);
+  cursor: pointer;
+  overflow: hidden;
+  transition: width 0.35s var(--ease), background-color 0.35s var(--ease);
+}
+.carousel__dot::after {           /* bigger, invisible tap target */
+  content: "";
+  position: absolute;
+  inset: -0.6rem -0.25rem;
+}
+.carousel__dot:hover { background: var(--ink-low); }
+.carousel__dot[aria-current="true"] { width: 1.6rem; background: var(--accent); }
+/* while playing, the active dot fills up to show when the next figure comes */
+.carousel.is-running .carousel__dot[aria-current="true"] {
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.carousel.is-running .carousel__dot[aria-current="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left center;
+  animation: carousel-fill var(--carousel-delay, 6s) linear forwards;
+}
+@keyframes carousel-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.carousel__count {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: var(--step--2);
+  letter-spacing: 0.06em;
+  color: var(--ink-low);
+}
+.carousel__count b { font-weight: 600; color: var(--ink-hi); }
+.carousel__buttons { display: flex; gap: 0.4rem; margin-left: auto; }
+.carousel__btn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--rule-strong);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink-hi);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.carousel__btn:hover { border-color: var(--accent); color: var(--accent); }
+.carousel__btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.carousel__btn svg { width: 1rem; height: 1rem; }
+.carousel__btn .icon-play { display: none; }
+.carousel.is-paused .carousel__btn .icon-pause { display: none; }
+.carousel.is-paused .carousel__btn .icon-play { display: block; }
+
+/* narrow panel: drop the dots, the counter and buttons are enough */
+@container (max-width: 340px) {
+  .carousel__dots { display: none; }
+}
+/* full-width panel on tablets: put the caption beside the figure */
+@container (min-width: 560px) {
+  .slide { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+  .slide__img { border-bottom: 0; border-right: 1px solid var(--rule); }
+  .slide__img { aspect-ratio: 4 / 3; }
+  .slide__cap { justify-content: center; padding: var(--sp-5); }
+  .slide__paper { margin-top: var(--sp-2); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carousel__dot { transition: none; }
+}
 
 /* Poster beside a symposium entry */
 .poster {
@@ -1167,7 +1326,7 @@ code, kbd, samp {
   gap: var(--sp-5);
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
 }
-@media (max-width: 800px) { .thrust__body { grid-template-columns: 1fr; } }
+@media (max-width: 960px) { .thrust__body { grid-template-columns: 1fr; } }
 .thrust__topics { columns: 2; column-gap: var(--sp-5); list-style: none; margin: 0; padding: 0; }
 @media (max-width: 520px) { .thrust__topics { columns: 1; } }
 .thrust__topics li {
@@ -1183,11 +1342,24 @@ code, kbd, samp {
   color: var(--accent);
   opacity: 0.55;
 }
+/* On wide screens the slideshow stays in view while the faculty list scrolls past */
+@media (min-width: 961px) {
+  .thrust__sticky { position: sticky; top: calc(var(--header-h) + var(--sp-5)); }
+}
+
+/* Each area's text: the paragraph ("blurb"), then the topic list with a thin rule above it */
+.thrust__body p.muted { margin: 0; }
+.thrust__body .thrust__topics {
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--rule);
+}
+
 .thrust__side {
   border-left: 1px solid var(--rule);
   padding-left: var(--sp-5);
 }
-@media (max-width: 800px) {
+@media (max-width: 960px) {
   .thrust__side {
     border-left: 0;
     border-top: 1px solid var(--rule);

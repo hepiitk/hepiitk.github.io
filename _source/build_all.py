@@ -4,13 +4,14 @@ build_all.py — rebuilds the WHOLE site, and holds everything shared.
 
     python3 _source/build_all.py
 
-The site is made by four files in _source/:
+The site is made by five files in _source/:
 
   build_members.py      members.html      (+ index.html)   people and photos
   build_news.py         news.html         (+ index.html)   news, PMRF, positions
   build_conferences.py  conferences.html  (+ index.html)   symposia and meetings
+  build_research.py           research.html     (+ index.html)   research areas and figures
   build_all.py          this file: the parts every page shares, plus the pages
-                        that rarely change — Home, Research, Seminars, Contact.
+                        that rarely change — Home, Seminars, Contact.
                         Running it rebuilds all seven pages.
 
 Sections of this file:
@@ -18,12 +19,15 @@ Sections of this file:
   2. Icons and drawings
   3. Helpers used by every page  (head, header, footer, img, ...)
   4. Home page          — build_index()
-  5. Research page      — THRUSTS, RESEARCH_FIGURES, build_research()
+  5. Research page      — now in build_research.py
   6. Seminars page      — build_seminars()
   7. Contact page       — EDITORS, build_contact()
   8. Build everything
 
 After changing ANYTHING in this file, run it:  python3 _source/build_all.py
+
+To download any missing research figures (see build_research.py) and then
+rebuild everything:                            python3 _source/build_all.py --figures
 """
 
 import html
@@ -33,7 +37,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.abspath(os.path.join(HERE, ".."))
-sys.path.insert(0, HERE)  # so the three page files can be imported from anywhere
+sys.path.insert(0, HERE)  # so the page files can be imported from anywhere
 
 
 # ==========================================================================
@@ -73,48 +77,20 @@ ICON = {
     "calendar": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
     "mail": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg>',
     "users": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c0-3.6 2.9-5.6 6.5-5.6s6.5 2 6.5 5.6"/><path d="M16.5 5.2a3.4 3.4 0 0 1 0 6.6M18 14.8c2.2.6 3.6 2.3 3.6 5.2"/></svg>',
+    "arrow-left": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>',
+    "arrow-right": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+    "pause": '<svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>',
+    "play": '<svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>',
     "news": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h12a1 1 0 0 1 1 1v13H5a1 1 0 0 1-1-1z"/><path d="M17 9h2a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-2M7 9h6M7 13h6M7 17h4"/></svg>',
 }
 
-# Line-engraving detector, used when assets/Home/... is not present.
+# Home page animation: two neutron stars spiral together, collide and blow out
+# a glowing kilonova cloud. Drawn by assets/merger.js on the <canvas> below;
+# its styles are in assets/style.css (search for ".merger").
 HERO_ART = """
-<svg viewBox="0 0 420 420" role="img" aria-label="Line drawing of a particle detector cross-section with collision tracks">
-  <g fill="none" stroke="#c5bfae">
-    <circle cx="210" cy="210" r="196" stroke-width="0.8"/>
-    <g class="detector-ring">
-      <circle cx="210" cy="210" r="178" stroke-width="0.8" stroke-dasharray="3 7"/>
-      <circle cx="210" cy="210" r="160" stroke-width="9" stroke-dasharray="22 7" opacity=".5"/>
-    </g>
-    <g class="detector-ring detector-ring--rev">
-      <circle cx="210" cy="210" r="134" stroke-width="13" stroke-dasharray="3 12" opacity=".55"/>
-      <circle cx="210" cy="210" r="114" stroke-width="0.8" stroke-dasharray="2 5"/>
-    </g>
-    <circle cx="210" cy="210" r="94" stroke-width="0.8"/>
-    <circle cx="210" cy="210" r="62" stroke-width="0.8" opacity=".8"/>
-  </g>
-
-  <!-- tracks out of the interaction point -->
-  <g fill="none" stroke-width="1.3" stroke-linecap="round">
-    <path class="trace" stroke="#7d1f2c" d="M210 210C244 188 286 190 330 150"/>
-    <path class="trace" stroke="#1d3557" d="M210 210C240 240 250 288 240 352"/>
-    <path class="trace" stroke="#7d1f2c" d="M210 210C176 226 132 226 78 260"/>
-    <path class="trace" stroke="#8a6a24" d="M210 210C196 172 166 140 112 112"/>
-    <path class="trace" stroke="#1d3557" d="M210 210C252 214 300 240 344 292"/>
-    <path class="trace" stroke="#7d1f2c" d="M210 210C206 164 214 112 252 62"/>
-    <path class="trace" stroke="#2f5d43" d="M210 210C170 208 120 188 70 148"/>
-    <path class="trace" stroke="#1d3557" d="M210 210C222 252 206 308 150 348"/>
-  </g>
-
-  <g fill="#7d1f2c">
-    <circle cx="330" cy="150" r="2.6"/><circle cx="240" cy="352" r="2.4"/>
-    <circle cx="78" cy="260" r="2.6"/><circle cx="112" cy="112" r="2.2"/>
-    <circle cx="344" cy="292" r="2.4"/><circle cx="252" cy="62" r="2.2"/>
-    <circle cx="70" cy="148" r="2.4"/><circle cx="150" cy="348" r="2.2"/>
-  </g>
-
-  <circle cx="210" cy="210" r="5" fill="#101216"/>
-  <circle cx="210" cy="210" r="13" fill="none" stroke="#101216" stroke-width="0.7" opacity=".5"/>
-</svg>
+<div class="merger" role="img" aria-label="Animation of two neutron stars spiralling together, colliding and blowing out a glowing cloud of debris">
+  <canvas width="840" height="840" aria-hidden="true"></canvas>
+</div>
 """
 
 BRAND_MARK = """
@@ -157,6 +133,10 @@ ART = {
     "symposium": ("img/symposium.svg", "Auditorium with a projection screen and rows of seats"),
     "news": ("img/news.svg", "Noticeboard with pinned announcements"),
     "contact": ("img/contact.svg", "A letter travelling towards the department building"),
+    "members": ("img/members.svg",
+                "Group members talking round a table, with portraits on the wall behind them"),
+    "research": ("img/research.svg",
+                 "An open notebook under a desk lamp, with a Feynman diagram and a plot with a peak"),
 }
 
 
@@ -356,16 +336,17 @@ def build_index():
     """Home page. Counts, news and research areas come from the other files."""
     from build_members import FACULTY, POSTDOCS, STUDENTS, ALUMNI
     from build_news import NEWS
+    from build_research import THRUSTS
 
     cards = []
     for t in THRUSTS:
-        top = "".join(f"<li><span class='pill'>{x}</span></li>" for x in t["topics"][:5])
+        top = " · ".join(t["topics"][:4])
         art_path, art_alt = ART[t["art"]]
         cards.append(f"""      <a class="card card--link {t['accent']}" href="research.html#{t['id']}" data-reveal>
         <span class="card__art">{img(art_path, art_alt)}</span>
         <h3>{t['title']}</h3>
         <p>{t['blurb']}</p>
-        <ul class="pill-list mt-4">{top}</ul>
+        <p class="card__topics">{top}</p>
         <p class="mt-4" style="color:var(--accent);font-weight:600">Explore the group's work →</p>
       </a>""")
 
@@ -392,13 +373,14 @@ def build_index():
     <div class="wrap hero__grid">
       <div>
         <p class="eyebrow">Department of Physics · IIT Kanpur</p>
-        <h1>Probing matter, spacetime and the <em>early universe</em></h1>
+        <h1>From quarks to <em>colliding stars</em></h1>
         <div class="hero__rule"></div>
         <p class="lede dropcap">
-          Our group at IIT Kanpur works on different aspects of high energy physics —
-          astroparticle physics, cosmology, particle theory and experiment, and string
-          theory. We are faculty, postdoctoral fellows and graduate students who actively
-          encourage and pursue collaborations across the subgroups.
+          We are faculty, postdoctoral fellows and graduate students in the Department of
+          Physics at IIT Kanpur. Our work spans particle theory, collider and neutrino
+          experiments, and string theory — from the particles made at the LHC to dark
+          matter, the early universe, black holes and the gravitational waves of merging
+          stars — and many of our projects cross between them.
         </p>
         <div class="cluster hero__actions">
           <a class="btn btn--primary" href="research.html">Research areas {ICON['arrow']}</a>
@@ -475,185 +457,15 @@ def build_index():
     </div>
   </section>
 """
-    body += footer()
+    body += footer().replace(
+        '<script src="assets/app.js" defer></script>',
+        '<script src="assets/app.js" defer></script>\n<script src="assets/merger.js" defer></script>')
     write("index.html", body)
 
 
 # ==========================================================================
-# 5. RESEARCH PAGE  (research.html)  —  edit THRUSTS / RESEARCH_FIGURES
+# 5. RESEARCH PAGE  —  lives in build_research.py (THRUSTS, FIGURES, build())
 # ==========================================================================
-THRUSTS = [
-    {
-        "id": "theory",
-        "art": "theory",
-        "num": "01",
-        "title": "Particle Theory",
-        "accent": "accent-maroon",
-        "icon": "atom",
-        "blurb": "Model building beyond the Standard Model, effective field theory and "
-                 "precision calculations, together with the QCD, cosmology and flavour "
-                 "questions that connect them to data.",
-        "topics": [
-            "Beyond Standard Model theory",
-            "Effective field theory",
-            "Precision physics",
-            "Perturbative and non-perturbative QCD",
-            "Cosmology &amp; astroparticle physics",
-            "Neutrino and flavour physics",
-            "Collider phenomenology",
-        ],
-        "members": ["Dipankar", "Debtosh", "Joydeep", "Kaushik", "Sabyasachi"],
-        "link": None,
-    },
-    {
-        "id": "experiment",
-        "art": "experiment",
-        "num": "02",
-        "title": "Particle Experiments",
-        "accent": "accent-gold",
-        "icon": "detector",
-        "blurb": "Collider and neutrino experiment: triggering and reconstruction, new-physics "
-                 "searches at the LHC, oscillation measurements with DUNE and ANNIE, and the "
-                 "detector and machine-learning work that makes them possible.",
-        "topics": [
-            "High-level trigger in collider experiments",
-            "Particle-flow reconstruction in CMS",
-            "Data scouting",
-            "Dark photon search",
-            "R-parity violating SUSY search",
-            "Long-lived particles",
-            "Machine learning",
-            "Neutrino oscillation physics (DUNE &amp; ANNIE)",
-            "Leptonic CP violation",
-            "Sterile neutrinos &amp; dark matter search",
-            "Neutrino–nucleus interaction measurements",
-            "State-of-the-art detector technology",
-            "Higgs precision measurements at the LHC",
-            "Jet studies at the LHC",
-        ],
-        "members": ["Navaneeth", "Swagata", "Sanmay"],
-        "link": None,
-    },
-    {
-        "id": "string",
-        "art": "string",
-        "num": "03",
-        "title": "String Theory",
-        "accent": "accent-navy",
-        "icon": "string",
-        "blurb": "Holography and quantum gravity, black hole physics, out-of-equilibrium "
-                 "dynamics and the bootstrap — from AdS/CFT to quantum thermalisation.",
-        "topics": [
-            "String theory",
-            "AdS/CFT, holography",
-            "General relativity",
-            "Black hole physics",
-            "Out-of-equilibrium physics",
-            "Quantum thermalisation",
-            "Conformal bootstrap",
-        ],
-        "members": ["Arjun", "Apratim", "Diptarka", "Gautam", "Nilay", "Tapobrata"],
-        "link": ("https://sites.google.com/view/st-iitk/home", "String theory group site"),
-    },
-]
-
-# Research figures, in the order they appeared in the old carousel
-RESEARCH_FIGURES = [
-    ("Research/0e27760f5774b747e27861a5fd15d2d0.jpg",
-     "Axion searches at the intensity frontier", ""),
-    ("Research/30614a063c51707a4e62ad9c48541579.jpg",
-     "Two-point susceptibility",
-     "Comparison between a conditional normalizing-flow model and the HMC result."),
-    ("Research/80446916e28ea1385c5cf01e3481c8fb.jpg",
-     "Dark matter production",
-     "Effect of an intermediate matter-dominated era on DM production."),
-    ("Research/fd872102dbb79ce5a6bae91ad0dbdb90.jpg",
-     "EFT to models", ""),
-    ("Research/0e3de9cddac55583368e2e9beeb66b52.jpg",
-     "Status of the 2HDM", "After 13 TeV of LHC data."),
-    ("Research/54df9e05619f5de560f4e389154b30d0.jpg",
-     "Dark photon searches at Belle II", ""),
-]
-
-
-def build_research():
-    """Research page."""
-    blocks = []
-    for t in THRUSTS:
-        topics = "".join(f"<li>{x}</li>" for x in t["topics"])
-        members = "".join(f'<li><span class="pill pill--accent">{m}</span></li>' for m in t["members"])
-        link = ""
-        if t["link"]:
-            link = f'<p class="mt-4">{ext(t["link"][0], t["link"][1], "globe")}</p>'
-        blocks.append(f"""      <div class="thrust {t['accent']}" id="{t['id']}" data-reveal>
-        <div class="thrust__head">
-          <span class="thrust__num">{t['num']}</span>
-          <h2>{t['title']}</h2>
-        </div>
-        <div class="thrust__body">
-          <div>
-            <p class="muted">{t['blurb']}</p>
-            <ul class="thrust__topics mt-4">{topics}</ul>
-          </div>
-          <div class="thrust__side">
-            <figure class="thrust__illus">{img(*ART[t['art']])}</figure>
-            <h3>Faculty in this area</h3>
-            <ul class="pill-list mt-4">{members}</ul>
-            {link}
-          </div>
-        </div>
-      </div>""")
-
-    body = head(
-        "Research",
-        "Particle theory, particle experiment and string theory at IIT Kanpur — from "
-        "effective field theory and collider phenomenology to holography and black holes.",
-        "research.html",
-    )
-    body += page_head_band(
-        "Research",
-        "The group's work spans three overlapping subgroups. Collaboration across them — "
-        "theory feeding searches, experiment sharpening models — is actively encouraged.",
-    )
-    gallery = "\n".join(
-        "        " + figure(path, title, cap) for path, title, cap in RESEARCH_FIGURES
-    )
-
-    body += f"""
-  <section class="section">
-    <div class="wrap">
-{''.join(blocks)}
-    </div>
-  </section>
-
-  <section class="section section--band" id="figures">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Selected figures</h2>
-        <span class="section-head__aside">from recent work</span>
-      </div>
-      <div class="gallery" data-reveal>
-{gallery}
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap">
-      <div class="callout accent-maroon" data-reveal>
-        <h3>Collaborating across subgroups</h3>
-        <p class="muted mb-0">
-          Several projects sit deliberately between the subgroups — effective field theory
-          matched to LHC measurements, dark sector models tested against intensity-frontier
-          data, machine learning methods shared between lattice and collider work. Prospective
-          students and postdocs are encouraged to talk to more than one faculty member.
-        </p>
-      </div>
-    </div>
-  </section>
-"""
-    body += footer()
-    write("research.html", body)
 
 
 # ==========================================================================
@@ -838,10 +650,15 @@ if __name__ == "__main__":
     import build_members
     import build_news
     import build_conferences
+    import build_research
+
+    if "--figures" in sys.argv:
+        build_research.fetch_figures(force="--force" in sys.argv)
+        print()
 
     build_index()
     build_members.build()
-    build_research()
+    build_research.build()
     build_seminars()
     build_conferences.build()
     build_news.build()

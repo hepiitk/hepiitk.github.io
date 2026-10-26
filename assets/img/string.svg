@@ -1,42 +1,167 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Line drawing of an anti-de Sitter cylinder with a boundary theory and a geodesic through the bulk">
-  <title>String theory and holography</title>
-  <rect width="480" height="300" fill="#fbfaf6"/>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 480 300"
+   role="img"
+   aria-label="Line drawing of an anti-de Sitter cylinder with a boundary theory and a geodesic through the bulk"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="string.svg"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.0550252"
+     inkscape:cx="203.31268"
+     inkscape:cy="90.993087"
+     inkscape:window-width="1512"
+     inkscape:window-height="773"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg10" />
+  <title
+     id="title1">String theory and holography</title>
+  <rect
+     width="628.81165"
+     height="357.75232"
+     fill="#fbfaf6"
+     id="rect1"
+     x="-72.984032"
+     y="-28.369139"
+     style="stroke-width:1.24988" />
   <!-- the AdS cylinder -->
-  <g fill="none" stroke="#101216" stroke-width="1.4">
-    <ellipse cx="240" cy="62" rx="150" ry="40"/>
-    <path d="M90 62v176M390 62v176"/>
-    <path d="M90 238a150 40 0 0 0 300 0" />
+  <g
+     fill="none"
+     stroke="#101216"
+     stroke-width="1.4"
+     id="g2">
+    <ellipse
+       cx="240"
+       cy="62"
+       rx="150"
+       ry="40"
+       id="ellipse1" />
+    <path
+       d="M90 62v176M390 62v176"
+       id="path1" />
+    <path
+       d="M90 238a150 40 0 0 0 300 0"
+       id="path2" />
   </g>
-  <path d="M90 238a150 40 0 0 1 300 0" fill="none" stroke="#c5bfae" stroke-width="1" stroke-dasharray="6 5"/>
-
+  <path
+     d="M90 238a150 40 0 0 1 300 0"
+     fill="none"
+     stroke="#c5bfae"
+     stroke-width="1"
+     stroke-dasharray="6 5"
+     id="path3" />
   <!-- radial slices of the bulk -->
-  <g fill="none" stroke="#ded9cd" stroke-width="1">
-    <ellipse cx="240" cy="122" rx="150" ry="40"/>
-    <ellipse cx="240" cy="182" rx="150" ry="40"/>
+  <g
+     fill="none"
+     stroke="#ded9cd"
+     stroke-width="1"
+     id="g4">
+    <ellipse
+       cx="240"
+       cy="122"
+       rx="150"
+       ry="40"
+       id="ellipse3" />
+    <ellipse
+       cx="240"
+       cy="182"
+       rx="150"
+       ry="40"
+       id="ellipse4" />
   </g>
-
   <!-- boundary CFT: a wave running around the top rim -->
-  <path d="M96 56 q18 -14 36 2 t36 2 t36 -4 t36 0 t36 2 t36 -2 t36 0"
-        fill="none" stroke="#7d1f2c" stroke-width="1.6" stroke-linecap="round"/>
-
+  <path
+     d="m 114,56 q 18,-14 36,2 18,16 36,2 18,-14 36,-4 18,10 36,0 18,-10 36,2 18,12 36,-2 18,-14 36,0"
+     fill="none"
+     stroke="#7d1f2c"
+     stroke-width="1.6"
+     stroke-linecap="round"
+     id="path4" />
   <!-- two boundary operators and the geodesic joining them through the bulk -->
-  <g fill="#7d1f2c">
-    <circle cx="126" cy="70" r="4.5"/>
-    <circle cx="354" cy="70" r="4.5"/>
+  <g
+     fill="#7d1f2c"
+     id="g5">
+    <circle
+       cx="126"
+       cy="70"
+       r="4.5"
+       id="circle4" />
+    <circle
+       cx="354"
+       cy="70"
+       r="4.5"
+       id="circle5" />
   </g>
-  <path d="M126 70 C168 176 312 176 354 70" fill="none" stroke="#1d3557" stroke-width="1.7"/>
-  <path d="M126 70 C168 176 312 176 354 70" fill="none" stroke="#1d3557" stroke-width="7" opacity=".08"/>
-
+  <path
+     d="M126 70 C168 176 312 176 354 70"
+     fill="none"
+     stroke="#1d3557"
+     stroke-width="1.7"
+     id="path5" />
+  <path
+     d="M126 70 C168 176 312 176 354 70"
+     fill="none"
+     stroke="#1d3557"
+     stroke-width="7"
+     opacity=".08"
+     id="path6" />
   <!-- a closed string worldsheet tube descending into the bulk -->
-  <g fill="none" stroke="#8a6a24" stroke-width="1.2">
-    <path d="M214 96 C206 150 210 196 226 232"/>
-    <path d="M266 96 C274 150 270 196 254 232"/>
-    <ellipse cx="240" cy="96" rx="26" ry="8"/>
-    <ellipse cx="240" cy="234" rx="14" ry="5" stroke-dasharray="4 4"/>
+  <g
+     fill="none"
+     stroke="#8a6a24"
+     stroke-width="1.2"
+     id="g9">
+    <path
+       d="M214 96 C206 150 210 196 226 232"
+       id="path7" />
+    <path
+       d="M266 96 C274 150 270 196 254 232"
+       id="path8" />
+    <ellipse
+       cx="240"
+       cy="96"
+       rx="26"
+       ry="8"
+       id="ellipse8" />
+    <ellipse
+       cx="240"
+       cy="234"
+       rx="14"
+       ry="5"
+       stroke-dasharray="4 4"
+       id="ellipse9" />
   </g>
-
   <!-- horizon hint at the centre of the bulk -->
-  <circle cx="240" cy="182" r="5" fill="#101216"/>
-  <circle cx="240" cy="182" r="13" fill="none" stroke="#101216" stroke-width="0.8" opacity=".45"/>
+  <circle
+     cx="240"
+     cy="182"
+     r="5"
+     fill="#101216"
+     id="circle9" />
+  <circle
+     cx="240"
+     cy="182"
+     r="13"
+     fill="none"
+     stroke="#101216"
+     stroke-width="0.8"
+     opacity=".45"
+     id="circle10" />
 </svg>

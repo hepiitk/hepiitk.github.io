@@ -4,7 +4,7 @@ The website of the High Energy Physics group, Department of Physics, IIT Kanpur.
 
 **Live site → <https://hepiitk.github.io/website/>**
 
-The site is plain HTML and CSS, written by **four small Python scripts** in the
+The site is plain HTML and CSS, written by **five small Python scripts** in the
 `_source/` folder. The names, photos, news, dates and links sit in simple lists
 inside them. To update a page you edit the list, run the script, and push the
 result to GitHub. About a minute later the live site updates.
@@ -31,25 +31,29 @@ Part 2 (the everyday routine) and Part 3 (how to update each page).
 ```
 index.html          Home page
 members.html        Faculty, postdocs, graduate students, alumni
-research.html       Research areas and the "Selected figures" gallery
+research.html       Research areas, each with a slideshow of figures from recent papers
 seminars.html       Seminar calendar and journal clubs
 conferences.html    In-house symposia, conferences and workshops
 news.html           News, postdoc positions, PMRF fellows, funding
 contact.html        Contact details and the editor team
 
-_source/                  The four scripts that write the pages above
+_source/                  The five scripts that write the pages above
   build_members.py        → members.html      + refreshes index.html
   build_news.py           → news.html         + refreshes index.html
   build_conferences.py    → conferences.html  + refreshes index.html
+  build_research.py       → research.html     + refreshes index.html
   build_all.py            → ALL seven pages. Also holds everything the pages share
                             (menu, footer, e-mail, phone) and the pages that rarely
-                            change: Home, Research, Seminars, Contact.
+                            change: Home, Seminars, Contact.
 
 assets/style.css    The design: colours, fonts, spacing, layout (all pages share it)
-assets/app.js       Small scripts: mobile menu, member search, animations
+assets/app.js       Small scripts: mobile menu, member search, slide-in effects
+assets/carousel.js  The figure slideshows on the Research page
+assets/merger.js    The neutron-star animation on the Home page
 assets/Members/     Member photos, named after the person: priya-nair.webp
 assets/ConferenceWorkshop/   Symposium posters: symposium-2026.webp
-assets/img/         Line drawings used across the site
+assets/Research/    Figures for the Research slideshows (made by build_research.py --figures)
+assets/img/         Line drawings beside page titles and on the Home page cards
 .gitignore          Tells Git to ignore Python's __pycache__ folder and stray .DS_Store files
 ```
 
@@ -59,11 +63,9 @@ assets/img/         Line drawings used across the site
 > you edit `_source/build_members.py`, for `news.html` you edit
 > `_source/build_news.py`, and so on.
 >
-> - `_source/` should contain **only these four `.py` files**. Delete any older
->   ones you find there (`build.py`, `common.py`, `build_index.py`, …).
-> - `styles.css` in the top folder (if it's still there) is left over from the old
->   site and isn't used. The real stylesheet is **`assets/style.css`**, which is
->   *not* written by any script, so you edit it directly.
+> - `_source/` should contain **only these five `.py` files**.
+> - `assets/style.css` and the `.js` files in `assets/` are *not* written by any
+>   script, so you edit them directly.
 
 ---
 
@@ -84,15 +86,16 @@ You only do this once per computer.
 
 These instructions are for **Debian-based Linux** (Debian, Ubuntu, Linux Mint, Pop!_OS…).
 
-You need four things: **Git** (tracks changes and talks to GitHub), **Python 3**
-(runs the page scripts), **ImageMagick** (shrinks photos, see [3.6](#36-photos-and-images))
-and **VS Code** (the editor you'll work in).
+You need: **Git** (tracks changes and talks to GitHub), **Python 3** (runs the
+page scripts), **ImageMagick** (shrinks photos, see [3.7](#37-photos-and-images)),
+**poppler-utils** and **Ghostscript** (convert research figures, see
+[3.4](#34-research--_sourcebuild_researchpy)) and **VS Code** (the editor you'll work in).
 
 Open a terminal (`Ctrl+Alt+T`) and run:
 
 ```bash
 sudo apt update
-sudo apt install git python3 imagemagick
+sudo apt install git python3 imagemagick poppler-utils ghostscript
 ```
 
 For **VS Code**, download the **`.deb`** package from <https://code.visualstudio.com>,
@@ -320,7 +323,7 @@ Everything about a person (name, photo, links, interests) is in **their own
 #### Add a graduate student or postdoc
 
 1. Put their photo in `assets/Members/`, named after them: `priya-nair.webp`
-   (see [3.6](#36-photos-and-images)).
+   (see [3.7](#37-photos-and-images)).
 2. Find the `GRADUATE STUDENTS` heading (or `POSTDOCTORAL FELLOWS`), copy any
    block, paste it where the new person should appear, and fill it in:
 
@@ -491,7 +494,95 @@ The four parts are: name, year, one-line description, meeting website.
 
 ---
 
-### 3.4 Home, Research, Seminars, Contact, menu and footer — `_source/build_all.py`
+### 3.4 Research — `_source/build_research.py`
+
+Builds `research.html`, then refreshes `index.html` (the Home page shows the
+three research areas). Run it with:
+
+```bash
+python3 _source/build_research.py
+```
+
+It holds two lists.
+
+**`THRUSTS`** has one `{ … }` block per research area (Particle Theory, Particle
+Experiments, String Theory). Leave `id`, `art`, `num`, `accent` and `icon` as they
+are, and edit:
+
+| Field | Where it shows |
+|---|---|
+| `"blurb"` | one **short** line on the **Home page** card |
+| `"about"` | the full paragraph at the top of the area on the **Research page** |
+| `"topics": [ … ]` | the topic list on the Research page (one topic per line, in quotes, comma after each). The Home page card shows the **first four** on one line, so put the most important first. |
+| `"members": [ … ]` | the first names under **Faculty in this area** |
+| `"link"` | `None`, or a button such as `("https://…", "String theory group site")` |
+
+**`FIGURES`** holds the slideshow of paper figures inside each area, in three
+lists: `FIGURES["theory"]`, `FIGURES["experiment"]` and `FIGURES["string"]`.
+Each slide moves on by itself every 6 seconds; visitors can also use the dots,
+the arrow buttons, the arrow keys or a swipe, and pause it. One slide is one block:
+
+```python
+    "theory": [
+        {
+            "faculty": "Priya Nair",
+            "caption": "One or two plain sentences saying what the figure shows.",
+            "paper": "Title of the paper",
+            "arxiv": "2604.03832",
+            "files": ["pkd.png", "pku.png"],
+            "image": "Research/nair-2604-03832.webp",
+        },
+        …
+```
+
+| Field | What to put |
+|---|---|
+| `"faculty"` | whose paper it is. Not shown on the page; it helps you keep track. |
+| `"caption"` | one or two plain sentences, shown under the figure |
+| `"paper"`, `"arxiv"` | the paper's title and arXiv number, shown as a link to `arxiv.org/abs/<number>` |
+| `"files"` | the figure's **file name as INSPIRE-HEP lists it**. Two or three names are placed side by side (left/right panels). |
+| `"image"` | where the finished picture is saved inside `assets/`. Name it `surname-arxivnumber.webp`; add a word at the end if you use two figures from the same paper. |
+
+**Finding a figure's file name:** open this address in your browser, with the
+paper's arXiv number at the end:
+
+```
+https://inspirehep.net/api/literature?fields=figures&q=arxiv:2604.03832
+```
+
+Each figure has a `"filename"` (e.g. `pku.png`) next to its `"caption"`, in the
+order the figures appear in the paper. Firefox shows it as a tidy list; in
+other browsers use the **Raw Data** or **Pretty Print** view.
+
+**Making the pictures.** One command downloads every figure that isn't in
+`assets/Research/` yet, trims and shrinks it to WebP, then rebuilds the page:
+
+```bash
+python3 _source/build_research.py --figures
+```
+
+It prints one line per figure: `saved`, `have` (already there) or `FAILED` with
+the reason. It takes the figure from INSPIRE-HEP; if INSPIRE-HEP doesn't have it,
+it unpacks the paper's source files from arXiv and converts the matching `.pdf`,
+`.eps` or `.png` itself (this needs `poppler-utils` and `ghostscript`, see
+[1.2](#12-install-the-tools)). To replace a picture, delete its `.webp` and run
+the command again, or add `--force` to re-download all of them. At the end it
+lists any pictures in `assets/Research/` that no slide uses any more, so you
+can delete them.
+
+- **Look at every new picture before you push.** Open `research.html` and step
+  through each slideshow; if a figure doesn't read well, use another figure from
+  the same paper.
+- A slide whose picture doesn't exist yet is **left out of the page**, and an area
+  with no pictures at all shows its line drawing instead.
+- **To remove a slide**, delete its block, run the script, and delete its `.webp`.
+- Commit the new files in `assets/Research/` together with `research.html`.
+- To change how long each slide stays up, edit `CAROUSEL_DELAY = 6000`
+  (milliseconds) at the top of `assets/carousel.js`.
+
+---
+
+### 3.5 Home, Seminars, Contact, menu and footer — `_source/build_all.py`
 
 These change rarely, so they live together in `build_all.py`, along with the
 parts every page shares. The file is divided into numbered sections; use
@@ -501,33 +592,89 @@ parts every page shares. The file is divided into numbered sections; use
 | To change… | Look in section | What to edit |
 |---|---|---|
 | Group e-mail, phone, site name, the menu | **1. SITE-WIDE SETTINGS** | `EMAIL`, `PHONE`, `SITE_NAME`, `NAV` (they appear on every page) |
-| Home page photo or welcome text | **4. HOME PAGE** | `HERO_PHOTO`, and the text inside `build_index()` |
-| Research topics or faculty per area | **5. RESEARCH PAGE** | In `THRUSTS`, one `{ … }` per subgroup: `"topics": [ … ]` (one topic per line, in quotes, comma after each), `"members": [ … ]`, `"blurb"`. Leave `id`, `art`, `accent`, `icon` as they are. |
-| *Selected figures* gallery | **5. RESEARCH PAGE** | `RESEARCH_FIGURES`: one figure is `("Research/file.webp", "Short title", "Caption or empty"),`, with the image in `assets/Research/` |
+| The line drawings beside page titles | **2b. IMAGES** | `ART` (see below) |
+| Home page heading and welcome text | **4. HOME PAGE** | the `<h1>` and the text inside `<p class="lede dropcap">` in `build_index()`. Keep `<em>…</em>` round the words you want in maroon italic. |
 | Seminars page text or links | **6. SEMINARS PAGE** | the text inside `build_seminars()` |
 | Editor team | **7. CONTACT PAGE** | `EDITORS`: one editor is `("Name", "email@iitk.ac.in"),` |
 
 The Home page's member counts, latest news and research areas are filled in
-automatically from the other files, so you don't edit those here.
+automatically from the other scripts, so you don't edit those here.
 
 > **Seminars** themselves come from the group's Google Calendar
 > (`hepiitk@gmail.com`). To add or change a seminar, **edit the Google Calendar,
 > not the website**. The page picks it up automatically.
 
+#### The animation on the Home page
+
+The two neutron stars that spiral together, collide and leave a black hole,
+with the gravitational-wave signal drawn underneath, are drawn by
+**`assets/merger.js`**. `HERO_ART` in `build_all.py` only places it on the page,
+and its size is set by the `.merger` rules in `assets/style.css`.
+
+To change how it moves or looks, edit the `MERGER` settings at the top of
+`assets/merger.js`; no rebuild is needed, just refresh the page:
+
+| Setting | What it does |
+|---|---|
+| `cycle` | seconds for one full loop |
+| `inspiral` | seconds the stars orbit before they collide |
+| `turns` | how many orbits they make |
+| `starA`, `starB` | the two stars' colours, each as three RGB colours: highlight, body, rim |
+
+The animation pauses when it's scrolled off screen, and visitors who have
+"reduce motion" switched on see a still picture.
+
+#### The line drawings beside page titles
+
+Each inner page can show a line drawing beside its title (the blackboard on
+Seminars, the auditorium on Conferences, and so on). They are `.svg` files in
+`assets/img/`, listed in `ART` in `build_all.py`:
+
+```python
+    "seminar": ("img/seminar.svg", "Blackboard with an equation and a lectern"),
+```
+
+The first part is the file, the second a short description for screen readers.
+A page shows its drawing through the `art="…"` line in its call to
+`page_head_band(…)`, for example `art="seminar"` in `build_seminars()`.
+
+- **To change a drawing**, replace the `.svg` file with one of the same name and
+  refresh the page. Nothing needs rebuilding.
+- **To add one to another page**, put the `.svg` in `assets/img/`, add a line
+  to `ART`, add `art="your-key"` to that page's `page_head_band(…)` call, and run
+  `python3 _source/build_all.py`.
+- Keep new drawings in the same style: a `420 × 276` canvas, an off-white
+  background (`#fbfaf6`), thin ink lines (`#101216`) and the maroon `#7d1f2c`,
+  navy `#1d3557` and gold `#8a6a24` accents.
+
 ---
 
-### 3.5 Colours, fonts, spacing and animations
+### 3.6 Colours, fonts, spacing and animations
 
 All the design lives in **`assets/style.css`**. No script writes this file, so
 you edit it directly and nothing needs rebuilding. Every colour is defined once
 at the top, in the `:root { … }` block, so changing a value there changes it
 everywhere. For example, `--maroon: #7d1f2c;` is the main accent colour. Change
 the design only if you're comfortable with CSS, and always preview several pages
-before pushing.
+before pushing. Your browser may keep an old copy of `style.css`, so
+hard-refresh (`Ctrl+Shift+R`) after a change.
+
+Three small scripts in `assets/` add the moving parts. Like `style.css`, no
+build script writes them:
+
+| File | What it does |
+|---|---|
+| `app.js` | mobile menu, member search, the slide-in effect, the counting numbers |
+| `carousel.js` | the figure slideshows on the Research page |
+| `merger.js` | the neutron-star animation on the Home page |
+
+The size of the Home page heading and introduction is set in the hero section
+of `style.css` (search for `/* ---------- 5. Hero`): `.hero h1 { font-size: … }`
+and `.hero .lede { font-size: … }`.
 
 ---
 
-### 3.6 Photos and images
+### 3.7 Photos and images
 
 **Always shrink a photo and convert it to WebP before adding it.** A phone
 photo is often 3–5 MB; the same picture as a 600 px WebP is around 30–80 KB.
@@ -591,7 +738,7 @@ Remember to **commit the image file too**. It appears under **Changes** with a *
 
 ---
 
-### 3.7 Editing an `.html` file directly (only for an emergency fix)
+### 3.8 Editing an `.html` file directly (only for an emergency fix)
 
 You *can* fix a typo straight in an `.html` file (or with the pencil ✏️ on
 GitHub). It works, but **it will be overwritten** the next time anyone runs that
@@ -617,6 +764,7 @@ Nothing was written, so the site is unchanged. Python tells you the **file** and
 | `NameError: name 'none' is not defined` | `None`, `True`, `False` must start with a capital letter |
 | `KeyError: 'name'` (or another field) | A block is missing that field, or its name is misspelt (`"Name"` instead of `"name"`). Copy a complete block. |
 | `ValueError: not enough values to unpack` | A `( … )` line in `CONFERENCES` or `EDITORS` has too few parts |
+| `FAILED … is not among the paper's figures` (from `--figures`) | The name in `"files"` doesn't match INSPIRE-HEP's file name exactly. Check it at the INSPIRE address in [3.4](#34-research--_sourcebuild_researchpy). |
 
 For the last two, the line number points into the page-building code lower
 down. The real mistake is in the entry you just added.
@@ -632,7 +780,7 @@ Python isn't installed. Install it with your package manager (see
 ### "My change disappeared"
 
 Someone ran a script after you edited the `.html` file directly, so the page was
-rewritten. Make the change in the script instead. See [3.7](#37-editing-an-html-file-directly-only-for-an-emergency-fix).
+rewritten. Make the change in the script instead. See [3.8](#38-editing-an-html-file-directly-only-for-an-emergency-fix).
 The old text is still in GitHub's **History** for that file.
 
 ### "I made a mess of a file and haven't committed yet"
@@ -684,7 +832,7 @@ To avoid conflicts: **pull before you start**, keep each change small, and
 
 Either the person's `"photo"` is `None`, the file name there doesn't match the
 file, or the file isn't in `assets/Members/`. Check the spelling, the **capital
-letters** and the **extension**. See [3.6](#36-photos-and-images).
+letters** and the **extension**. See [3.7](#37-photos-and-images).
 
 ---
 
@@ -697,10 +845,11 @@ letters** and the **extension**. See [3.6](#36-photos-and-images).
 | people, photos, alumni | `python3 _source/build_members.py` |
 | news, PMRF, positions | `python3 _source/build_news.py` |
 | symposia, conferences | `python3 _source/build_conferences.py` |
-| anything in `build_all.py` (menu, footer, e-mail, phone, Home, Research, Seminars, Contact), or not sure | `python3 _source/build_all.py` |
-| `assets/style.css` | nothing, just save |
+| research areas or their figure slideshows | `python3 _source/build_research.py` (add `--figures` to download new figures) |
+| anything in `build_all.py` (menu, footer, e-mail, phone, Home text, Seminars, Contact, drawings list), or not sure | `python3 _source/build_all.py` |
+| `assets/style.css`, a `.js` file in `assets/`, or a drawing in `assets/img/` | nothing, just save and refresh |
 
-The first three also refresh the Home page (`index.html`) every time.
+The first four also refresh the Home page (`index.html`) every time.
 
 ### The routine in VS Code
 
@@ -744,6 +893,7 @@ git clone https://github.com/hepiitk/website.git
 - [ ] I previewed the page in a browser and it looks right.
 - [ ] New photos are shrunk to WebP (tens of KB, not MB), show on the page (not initials), and their file names are lowercase.
 - [ ] I'm not committing the large original photo (`.jpg` / `.png`).
+- [ ] New research figures look right in their slideshow, and unused ones are deleted from `assets/Research/`.
 - [ ] I'm committing the `.py` file, the `.html` file(s) it wrote, and any new images.
 - [ ] My commit message says what I changed.
 

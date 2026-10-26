@@ -596,6 +596,7 @@ def build():
         </label>
         <span id="filter-status" class="dim" style="font-size:var(--step--1)" role="status" aria-live="polite"></span>
       </div>""",
+      art="members",
     )
     body += f"""
   <div class="subnav">

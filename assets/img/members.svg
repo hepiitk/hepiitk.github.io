@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 276" role="img" aria-label="Line drawing of a framed group photograph: one row of people standing behind a seated row">
+  <title>Members</title>
+  <rect width="420" height="276" fill="#fbfaf6"/>
+
+  <!-- the photograph in its frame -->
+  <rect x="66" y="26" width="288" height="170" rx="3" fill="#f4f2ea" stroke="#101216" stroke-width="1.4"/>
+  <rect x="76" y="36" width="268" height="150" fill="none" stroke="#c5bfae" stroke-width="0.9"/>
+  <path d="M76 180 h268" stroke="#c5bfae" stroke-width="0.9"/>
+
+  <!-- back row, standing -->
+  <g>
+    <path d="M97.1 150 C97.1 92.8 102.8 82.0 116.0 82.0 C129.2 82.0 134.9 92.8 134.9 150" fill="#f4f2ea" stroke="#101216" stroke-width="1.2"/>
+    <circle cx="116" cy="70" r="9" fill="#fbfaf6" stroke="#101216" stroke-width="1.2"/>
+    <path d="M107.0 69.0 q1.8 -10.3 9.0 -9.0 q7.2 -1.3 9.0 9.0" fill="none" stroke="#101216" stroke-width="0.96" stroke-linecap="round" opacity=".7"/>
+    <path d="M131.1 150 C131.1 88.8 136.8 78.0 150.0 78.0 C163.2 78.0 168.9 88.8 168.9 150" fill="#f1ead9" stroke="#101216" stroke-width="1.2"/>
+    <path d="M145.1 79.0 l5.0 6.3 5.0 -6.3" fill="none" stroke="#8a6a24" stroke-width="1.2" stroke-linejoin="round"/>
+    <circle cx="150" cy="66" r="9" fill="#fbfaf6" stroke="#101216" stroke-width="1.2"/>
+    <path d="M165.1 150 C165.1 92.8 170.8 82.0 184.0 82.0 C197.2 82.0 202.9 92.8 202.9 150" fill="#f4f2ea" stroke="#101216" stroke-width="1.2"/>
+    <circle cx="184" cy="70" r="9" fill="#fbfaf6" stroke="#101216" stroke-width="1.2"/>
+    <path d="M174.0 78.1 q-1.0 -19.8 10.0 -18.0 q11.0 -1.8 10.0 18.0" fill="none" stroke="#101216" stroke-width="1.92" stroke-linecap="round"/>
+    <path d="M199.1 150 C199.1 87.8 204.8 77.0 218.0 77.0 C231.2 77.0 236.9 87.8 236.9 150" fill="#e6eaf1" stroke="#101216" stroke-width="1.2"/>
+    <path d="M213.1 78.0 l5.0 6.3 5.0 -6.3" fill="none" stroke="#1d3557" stroke-width="1.2" stroke-linejoin="round"/>
+    <circle cx="218" cy="65" r="9" fill="#fbfaf6" stroke="#101216" stroke-width="1.2"/>
+    <path d="M209.0 64.0 q1.8 -10.3 9.0 -9.0 q7.2 -1.3 9.0 9.0" fill="none" stroke="#101216" stroke-width="0.96" stroke-linecap="round" opacity=".7"/>
+    <g fill="none" stroke="#1d3557" stroke-width="1"><circle cx="214.0" cy="66" r="2.9"/><circle cx="222.0" cy="66" r="2.9"/><path d="M216.8 66 h2.3"/></g>
+    <path d="M233.1 150 C233.1 91.8 238.8 81.0 252.0 81.0 C265.2 81.0 270.9 91.8 270.9 150" fill="#f4f2ea" stroke="#101216" stroke-width="1.2"/>
+    <circle cx="252" cy="69" r="9" fill="#fbfaf6" stroke="#101216" stroke-width="1.2"/>
+    <path d="M267.1 150 C267.1 88.8 272.8 78.0 286.0 78.0 C299.2 78.0 304.9 88.8 304.9 150" fill="#f3e6e6" stroke="#101216" stroke-width="1.2"/>
+    <path d="M281.1 79.0 l5.0 6.3 5.0 -6.3" fill="none" stroke="#7d1f2c" stroke-width="1.2" stroke-linejoin="round"/>
+    <circle cx="286" cy="66" r="9" fill="#fbfaf6" stroke="#101216" stroke-width="1.2"/>
+    <path d="M276.0 74.1 q-1.0 -19.8 10.0 -18.0 q11.0 -1.8 10.0 18.0" fill="none" stroke="#101216" stroke-width="1.92" stroke-linecap="round"/>
+    <path d="M299.1 150 C299.1 92.8 304.8 82.0 318.0 82.0 C331.2 82.0 336.9 92.8 336.9 150" fill="#f4f2ea" stroke="#101216" stroke-width="1.2"/>
+    <circle cx="318" cy="70" r="9" fill="#fbfaf6" stroke="#101216" stroke-width="1.2"/>
+    <path d="M309.0 69.0 q1.8 -10.3 9.0 -9.0 q7.2 -1.3 9.0 9.0" fill="none" stroke="#101216" stroke-width="0.96" stroke-linecap="round" opacity=".7"/>
+  </g>
+
+  <!-- front row, seated on chairs -->
+  <g>
+    <path d="M110.9 166 C110.9 139.2 117.8 126.0 134.0 126.0 C150.2 126.0 157.1 139.2 157.1 166" fill="#f3e6e6" stroke="#101216" stroke-width="1.35"/>
+    <path d="M128.0 127.0 l6.1 7.7 6.1 -7.7" fill="none" stroke="#7d1f2c" stroke-width="1.35" stroke-linejoin="round"/>
+    <circle cx="134" cy="112" r="11" fill="#fbfaf6" stroke="#101216" stroke-width="1.35"/>
+    <path d="M123.0 111.0 q2.2 -12.6 11.0 -11.0 q8.8 -1.6 11.0 11.0" fill="none" stroke="#101216" stroke-width="1.08" stroke-linecap="round" opacity=".7"/>
+    <path d="M152.9 166 C152.9 137.2 159.8 124.0 176.0 124.0 C192.2 124.0 199.1 137.2 199.1 166" fill="#e6eaf1" stroke="#101216" stroke-width="1.35"/>
+    <path d="M169.9 125.0 l6.1 7.7 6.1 -7.7" fill="none" stroke="#1d3557" stroke-width="1.35" stroke-linejoin="round"/>
+    <circle cx="176" cy="110" r="11" fill="#fbfaf6" stroke="#101216" stroke-width="1.35"/>
+    <g fill="none" stroke="#1d3557" stroke-width="1"><circle cx="171.1" cy="111" r="3.5"/><circle cx="180.9" cy="111" r="3.5"/><path d="M174.6 111 h2.8"/></g>
+    <path d="M194.9 166 C194.9 140.2 201.8 127.0 218.0 127.0 C234.2 127.0 241.1 140.2 241.1 166" fill="#f4f2ea" stroke="#101216" stroke-width="1.35"/>
+    <circle cx="218" cy="113" r="11" fill="#fbfaf6" stroke="#101216" stroke-width="1.35"/>
+    <path d="M206.0 122.9 q-1.0 -24.2 12.0 -22.0 q13.0 -2.2 12.0 22.0" fill="none" stroke="#101216" stroke-width="2.16" stroke-linecap="round"/>
+    <path d="M236.9 166 C236.9 137.2 243.8 124.0 260.0 124.0 C276.2 124.0 283.1 137.2 283.1 166" fill="#f1ead9" stroke="#101216" stroke-width="1.35"/>
+    <path d="M253.9 125.0 l6.1 7.7 6.1 -7.7" fill="none" stroke="#8a6a24" stroke-width="1.35" stroke-linejoin="round"/>
+    <circle cx="260" cy="110" r="11" fill="#fbfaf6" stroke="#101216" stroke-width="1.35"/>
+    <path d="M249.0 109.0 q2.2 -12.6 11.0 -11.0 q8.8 -1.6 11.0 11.0" fill="none" stroke="#101216" stroke-width="1.08" stroke-linecap="round" opacity=".7"/>
+    <path d="M276.9 166 C276.9 139.2 283.8 126.0 300.0 126.0 C316.2 126.0 323.1 139.2 323.1 166" fill="#e6eaf1" stroke="#101216" stroke-width="1.35"/>
+    <path d="M293.9 127.0 l6.1 7.7 6.1 -7.7" fill="none" stroke="#1d3557" stroke-width="1.35" stroke-linejoin="round"/>
+    <circle cx="300" cy="112" r="11" fill="#fbfaf6" stroke="#101216" stroke-width="1.35"/>
+  </g>
+  <path d="M112 166 h44M116 166 l-2 14M152 166 l2 14M154 166 h44M158 166 l-2 14M194 166 l2 14M196 166 h44M200 166 l-2 14M236 166 l2 14M238 166 h44M242 166 l-2 14M278 166 l2 14M278 166 h44M282 166 l-2 14M318 166 l2 14" fill="none" stroke="#101216" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- ledge and label plate -->
+  <rect x="66" y="196" width="288" height="9" rx="2" fill="#ded9cd" stroke="#101216" stroke-width="1.1"/>
+  <rect x="172" y="218" width="76" height="18" rx="2" fill="#f4f2ea" stroke="#101216" stroke-width="1.1"/>
+  <path d="M182 225 h56M190 230 h40" stroke="#8a6a24" stroke-width="1.1" stroke-linecap="round"/>
+
+  <!-- a few stars, as in the other drawings -->
+  <g fill="none" stroke="#c5bfae" stroke-width="1">
+    <path d="M38 52 v8M34 56 h8M384 94 v6M381 97 h6M372 230 v8M368 234 h8M44 214 v6M41 217 h6"/>
+  </g>
+</svg>
