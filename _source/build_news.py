@@ -28,6 +28,12 @@ from build_all import *  # noqa: F401,F403  (shared helpers: head, footer, img, 
 # ==========================================================================
 NEWS = [
     {
+        "tag": "Discussion Meeting",
+        "title": "National Strings Meeting 2026",
+        "body": "The NSM 2026 will be held from 15 December to 19 December 2026.",
+        "link": ("nsm2026", "Webpage and details"),
+        },
+    {
         "tag": "Symposium",
         "title": "In-House Symposium 2026",
         "body": "The group's in-house symposium was held on 31 January &amp; 1 February 2026.",
