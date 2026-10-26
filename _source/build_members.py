@@ -436,7 +436,7 @@ STUDENTS = [
         "name": "Siddhartha Bandyopadhyay",
         "photo": "siddhartha-bandyopadhyay.webp",
         "web": None,
-        "inspire": None,
+        "inspire": "2833773",
     },
 ]
 
