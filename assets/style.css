@@ -328,7 +328,7 @@ code, kbd, samp {
   flex: none;
   color: var(--maroon);
 }
-/* Institute emblem, if assets/iitk-logo.jpg is present */
+/* Institute emblem, if assets/iitk-logo.svg is present */
 .brand__logo {
   width: 40px;
   height: 40px;

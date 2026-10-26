@@ -118,8 +118,8 @@ BRAND_MARK = """
 IMG_DIR = "assets"
 
 # Institute emblem in the masthead: copy either top-level .jpg from the old
-# export to assets/iitk-logo.jpg. Falls back to the drawn mark above.
-LOGO = "iitk-logo.jpg"
+# export to assets/iitk-logo.svg. Falls back to the drawn mark above.
+LOGO = "iitk-logo.svg"
 
 # Drawn artwork that ships with the site (assets/img/*.svg) — nothing to copy.
 # These are line engravings made for this site, in the same ink/maroon palette.
