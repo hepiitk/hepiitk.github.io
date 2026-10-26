@@ -432,6 +432,12 @@ STUDENTS = [
         "web": None,
         "inspire": None,
     },
+    {
+        "name": "Siddhartha Bandyopadhyay",
+        "photo": "siddhartha-bandyopadhyay.webp",
+        "web": None,
+        "inspire": None,
+    },
 ]
 
 # ==========================================================================
