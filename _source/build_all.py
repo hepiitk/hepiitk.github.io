@@ -195,6 +195,13 @@ def sheet_embed(sheet_id, label, gid=None):
         <iframe src="{src}" title="{label}" loading="lazy"></iframe>
       </div>"""
 
+def fold(show, hide, inner, open=False):
+    """An open/close bar ("Show the calendar" / "Hide the calendar") with
+    `inner` underneath. open=True starts it unfolded."""
+    return f"""      <details class="fold" data-reveal{' open' if open else ''}>
+        <summary><span class="fold__open">{show}</span><span class="fold__close">{hide}</span></summary>
+{inner}
+      </details>"""
 
 def head(title, desc, page):
     full = f"{title} · {SITE_SHORT}" if page != "index.html" else f"{SITE_NAME}"
@@ -479,6 +486,15 @@ def build_seminars():
         "https://calendar.google.com/calendar/embed?src=hepiitk%40gmail.com"
         "&ctz=Asia%2FKolkata&color=%239fe1e7&mode=AGENDA&showTitle=0&showPrint=0"
     )
+    calendar = f"""      <div class="embed embed--calendar">
+        <div class="embed__bar">
+          <span>hepiitk@gmail.com</span>
+          {ext("https://calendar.google.com/calendar/embed?src=hepiitk%40gmail.com&ctz=Asia%2FKolkata", "Open calendar", "external")}
+        </div>
+        <iframe src="{cal_src}" title="HEP@IITK seminar calendar" loading="lazy"></iframe>
+      </div>"""
+    roster = sheet_embed("1anX0qlXKS1CVkrHNJprBONlXY60kgFt8gxzGX6w_rms", "Journal_Club@IITK", "0")
+
     body = head(
         "Seminars",
         "HEP seminars, the particle journal club and the string journal club at IIT Kanpur.",
@@ -507,13 +523,7 @@ def build_seminars():
         <h2>HEP seminars</h2>
         <span class="section-head__aside">group calendar · Asia/Kolkata</span>
       </div>
-      <div class="embed embed--calendar" data-reveal>
-        <div class="embed__bar">
-          <span>hepiitk@gmail.com</span>
-          {ext("https://calendar.google.com/calendar/embed?src=hepiitk%40gmail.com&ctz=Asia%2FKolkata", "Open calendar", "external")}
-        </div>
-        <iframe src="{cal_src}" title="HEP@IITK seminar calendar" loading="lazy"></iframe>
-      </div>
+{fold("Show the seminar calendar", "Hide the seminar calendar", calendar)}
       <p class="credit mt-4">
         Speakers and visitors are welcome — write to
         <a href="mailto:{EMAIL}">{EMAIL}</a> to be added to the seminar announcements.
@@ -529,7 +539,7 @@ def build_seminars():
       </div>
       <p class="muted">A rotating journal club run by the particle theory and experiment
          subgroups. The sheet below carries the speaker roster and papers.</p>
-{sheet_embed("1anX0qlXKS1CVkrHNJprBONlXY60kgFt8gxzGX6w_rms", "Journal_Club@IITK", "0")}
+{fold("Show the journal club roster", "Hide the journal club roster", roster, open=True)}
     </div>
   </section>
 
@@ -548,7 +558,6 @@ def build_seminars():
 """
     body += footer()
     write("seminars.html", body)
-
 
 # ==========================================================================
 # 7. CONTACT PAGE  (contact.html)  —  edit EDITORS

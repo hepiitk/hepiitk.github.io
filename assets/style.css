@@ -1428,9 +1428,11 @@ code, kbd, samp {
 .symposium__title { font-size: var(--step-3); margin-bottom: var(--sp-3); }
 .symposium__actions { margin-top: var(--sp-5); }
 
-/* The programme: a quiet disclosure row, the live sheet underneath */
+/* Open/close bars: the programme on the Conferences page (.symposium__schedule)
+   and the calendar and roster on the Seminars page (.fold) */
 .symposium__schedule { grid-column: 1 / -1; }
-.symposium__schedule > summary {
+.fold { margin-top: var(--sp-4); }
+:is(.symposium__schedule, .fold) > summary {
   list-style: none;
   cursor: pointer;
   display: flex;
@@ -1446,8 +1448,8 @@ code, kbd, samp {
   color: var(--ink-hi);
   transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease);
 }
-.symposium__schedule > summary::-webkit-details-marker { display: none; }
-.symposium__schedule > summary::before {
+:is(.symposium__schedule, .fold) > summary::-webkit-details-marker { display: none; }
+:is(.symposium__schedule, .fold) > summary::before {
   content: "";
   width: 0.5rem;
   height: 0.5rem;
@@ -1456,16 +1458,19 @@ code, kbd, samp {
   transform: rotate(-45deg);
   transition: transform 0.2s var(--ease);
 }
-.symposium__schedule[open] > summary::before { transform: rotate(45deg); }
-.symposium__schedule > summary:hover { background: var(--maroon-tint); border-color: var(--rule-strong); }
-.symposium__schedule[open] > summary {
+:is(.symposium__schedule, .fold)[open] > summary::before { transform: rotate(45deg); }
+:is(.symposium__schedule, .fold) > summary:hover { background: var(--maroon-tint); border-color: var(--rule-strong); }
+:is(.symposium__schedule, .fold)[open] > summary {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 .symposium__summary-close,
-.symposium__schedule[open] .symposium__summary-open { display: none; }
-.symposium__schedule[open] .symposium__summary-close { display: inline; }
-.symposium__schedule .embed {
+.symposium__schedule[open] .symposium__summary-open,
+.fold__close,
+.fold[open] .fold__open { display: none; }
+.symposium__schedule[open] .symposium__summary-close,
+.fold[open] .fold__close { display: inline; }
+:is(.symposium__schedule, .fold) .embed {
   border-top: 0;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
