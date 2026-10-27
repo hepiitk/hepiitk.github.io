@@ -1270,7 +1270,7 @@ code, kbd, samp {
 
 /* narrow panel: drop the dots, the counter and buttons are enough */
 @container (max-width: 340px) {
-  .carousel__dots { display: none; }
+  .carousel__dots { flex: 1 0 100%; }
 }
 /* full-width panel on tablets: put the caption beside the figure */
 @container (min-width: 560px) {
