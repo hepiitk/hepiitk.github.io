@@ -33,9 +33,39 @@ from build_all import *  # noqa: F401,F403  (shared helpers: head, footer, img, 
 #             so put the most important first)
 THRUSTS = [
     {
+        "id": "string",
+        "art": "string",
+        "num": "01",
+        "title": "String Theory",
+        "accent": "accent-navy",
+        "icon": "string",
+        "blurb": "Holography, black holes, Carrollian physics and quantum systems out "
+                 "of equilibrium.",
+        "about": "We study quantum gravity and strongly coupled quantum systems: "
+                 "holography, black holes and their horizons, entanglement and islands, and "
+                 "Carrollian physics with tensionless strings. The conformal bootstrap and "
+                 "periodically driven systems link this work to statistical and "
+                 "condensed-matter physics. Recent work ranges from the scattering of null "
+                 "strings and holography in flat space to islands in braneworlds, Floquet "
+                 "conformal field theories, and stars torn apart by black holes and wormholes.",
+        "topics": [
+            "Tensionless (null) strings",
+            "Holography &amp; AdS/CFT",
+            "Black holes &amp; horizons",
+            "Entanglement &amp; islands",
+            "Carrollian holography",
+            "Conformal bootstrap",
+            "Floquet &amp; non-equilibrium dynamics",
+            "Quantum chaos &amp; thermalisation",
+            "Tidal disruption &amp; wormholes",
+        ],
+        "members": ["Arjun", "Apratim", "Diptarka", "Gautam", "Nilay", "Tapobrata"],
+        "link": ("https://sites.google.com/view/st-iitk/home", "String theory group site"),
+    },
+    {
         "id": "theory",
         "art": "theory",
-        "num": "01",
+        "num": "02",
         "title": "Particle Theory",
         "accent": "accent-maroon",
         "icon": "atom",
@@ -65,7 +95,7 @@ THRUSTS = [
     {
         "id": "experiment",
         "art": "experiment",
-        "num": "02",
+        "num": "03",
         "title": "Particle Experiments",
         "accent": "accent-gold",
         "icon": "detector",
@@ -93,36 +123,6 @@ THRUSTS = [
         "members": ["Navaneeth", "Swagata", "Sanmay"],
         "link": None,
     },
-    {
-        "id": "string",
-        "art": "string",
-        "num": "03",
-        "title": "String Theory",
-        "accent": "accent-navy",
-        "icon": "string",
-        "blurb": "Holography, black holes, Carrollian physics and quantum systems out "
-                 "of equilibrium.",
-        "about": "We study quantum gravity and strongly coupled quantum systems: "
-                 "holography, black holes and their horizons, entanglement and islands, and "
-                 "Carrollian physics with tensionless strings. The conformal bootstrap and "
-                 "periodically driven systems link this work to statistical and "
-                 "condensed-matter physics. Recent work ranges from the scattering of null "
-                 "strings and holography in flat space to islands in braneworlds, Floquet "
-                 "conformal field theories, and stars torn apart by black holes and wormholes.",
-        "topics": [
-            "Tensionless (null) strings",
-            "Holography &amp; AdS/CFT",
-            "Black holes &amp; horizons",
-            "Entanglement &amp; islands",
-            "Carrollian holography",
-            "Conformal bootstrap",
-            "Floquet &amp; non-equilibrium dynamics",
-            "Quantum chaos &amp; thermalisation",
-            "Tidal disruption &amp; wormholes",
-        ],
-        "members": ["Arjun", "Apratim", "Diptarka", "Gautam", "Nilay", "Tapobrata"],
-        "link": ("https://sites.google.com/view/st-iitk/home", "String theory group site"),
-    },
 ]
 
 
@@ -144,6 +144,131 @@ THRUSTS = [
 # A slide whose picture does not exist yet is left out of the page. An area
 # with no pictures at all shows its line drawing instead.
 FIGURES = {
+# ------------------------------------------------------------ String Theory
+    "string": [
+        {
+            "faculty": "Tapobrata Sarkar",
+            "caption": "Simulated debris of a star 0.55 days after it is disrupted by a black hole "
+                       "(left) and by a wormhole (right) of the same mass.",
+            "paper": "Relativistic Tidal Disruption in Black Hole and Wormhole Backgrounds",
+            "arxiv": "2603.26442",
+            "files": ["bh_late.png", "wh_late.png"],
+            "image": "Research/sarkar-2603-26442.webp",
+        },
+        {
+            "faculty": "Arjun Bagchi",
+            "caption": "A heuristic picture of an acoustic black hole: a flat band of waves sits on "
+                       "the horizon while Poincaré waves fluctuate around it.",
+            "paper": "Carroll in Shallow Water",
+            "arxiv": "2411.04190",
+            "files": ["wave-bh.png"],
+            "image": "Research/bagchi-2411-04190.webp",
+        },
+        {
+            "faculty": "Gautam Sengupta",
+            "caption": "A black string with a brane (red), the Hartman–Maldacena surface (blue) and "
+                       "the island surfaces (green) used to compute entropies holographically.",
+            "paper": "Reflected entropy in BCFTs on a black hole background",
+            "arxiv": "2311.17023",
+            "files": ["Braneworld-eps-converted-to.png"],
+            "image": "Research/sengupta-2311-17023.webp",
+        },
+        {
+            "faculty": "Diptarka Das",
+            "caption": "Snapshots of the time evolution of the classical string profile behind a "
+                       "class of string scattering amplitudes.",
+            "paper": "Classical string profile for a class of DDF amplitudes",
+            "arxiv": "2506.23974",
+            "files": ["figure.png"],
+            "image": "Research/das-2506-23974.webp",
+        },
+        # {
+        #     "faculty": "Apratim Kaviraj",
+        #     "caption": "Renormalisation-group flow of a disordered surface defect in the Ising "
+        #                "model, with two ordered fixed points (red) and one disordered (blue).",
+        #     "paper": "Ising surface defects can get dirty",
+        #     "arxiv": "2605.22628",
+        #     "files": ["flowplot2.png"],
+        #     "image": "Research/kaviraj-2605-22628.webp",
+        # },
+        {
+            "faculty": "Arjun Bagchi",
+            "caption": "A Penrose diagram of the Schwarzschild black hole with its near-horizon "
+                       "region in blue; the inset shows how the horizon is reached from it.",
+            "paper": "Black hole Near Horizons through the Looking Glass",
+            "arxiv": "2602.20267",
+            "files": ["Penrose.png"],
+            "image": "Research/bagchi-2602-20267.webp",
+        },
+        # {
+        #     "faculty": "Nilay Kundu",
+        #     "caption": "The maximal analytic extension of the self-similar charged Vaidya "
+        #                "spacetime; dashed lines mark surfaces of constant z.",
+        #     "paper": "Homothetic Killing horizons in generic Vaidya spacetimes",
+        #     "arxiv": "2604.09760",
+        #     "files": ["RNV_1_alt.png"],
+        #     "image": "Research/kundu-2604-09760.webp",
+        # },
+                {
+            "faculty": "Nilay Kundu",
+            "caption": "A ground-state wave function built from a Euclidean path integral, and its "
+                       "optimisation, which turns out to be described by hyperbolic (anti-de Sitter) "
+                       "geometry; right, the matching tensor network.",
+            "paper": "Anti-de Sitter Space from Optimization of Path Integrals in Conformal Field Theories",
+            "arxiv": "1703.00456",
+            "files": ["pathintegral.png"],
+            "image": "Research/kundu-1703-00456.webp",
+        },
+        {
+            "faculty": "Apratim Kaviraj",
+            "caption": "The phase diagram of the three-dimensional Ising model with a boundary, "
+                       "whose transitions are followed with a truncated bootstrap.",
+            "paper": "Truncated Polyakov bootstrap for BCFTs: Neumann-Dirichlet flow and Ising "
+                     "special transition",
+            "arxiv": "2609.07841",
+            "files": ["surface_critical_phase_diagram_final.png"],
+            "image": "Research/kaviraj-2609-07841.webp",
+        },
+        {
+            "faculty": "Gautam Sengupta",
+            "caption": "A boosted interval (orange) across the interface of a Janus-deformed field "
+                       "theory, with the minimal geodesic (green) that gives its holographic "
+                       "entanglement entropy.",
+            "paper": "Holographic Entanglement Entropy in Janus deformed AdS3 Geometries",
+            "arxiv": "2512.06374",
+            "files": ["subsystem.png"],
+            "image": "Research/sengupta-2512-06374.webp",
+        },
+        # {
+        #     "faculty": "Diptarka Das",
+        #     "caption": "Energy density in a periodically driven conformal field theory: it "
+        #                "localises in the heating phase (left) and oscillates in the non-heating phase (right).",
+        #     "paper": "Exactly Solvable Floquet Dynamics for Conformal Field Theories in "
+        #              "Dimensions Greater than Two",
+        #     "arxiv": "2311.13468",
+        #     "files": ["fig5a.png"],
+        #     "image": "Research/das-2311-13468.webp",
+        # },
+        {
+            "faculty": "Tapobrata Sarkar",
+            "caption": "Simulated debris of a white-dwarf binary falling onto an intermediate-mass "
+                       "black hole: before, shortly after and long after it fragments.",
+            "paper": "Tidal disruptions of close white dwarf binaries by intermediate mass black holes",
+            "arxiv": "2508.03463",
+            "files": ["clump_1.png", "clump_2.png", "clump_3.png"],
+            "image": "Research/sarkar-2508-03463.webp",
+        },
+        {
+            "faculty": "Arjun Bagchi",
+            "caption": "A heuristic sketch of a class of Carroll (tensionless) strings wrapping "
+                       "around the event horizon of a black hole.",
+            "paper": "The Tensionless Lives of Null Strings",
+            "arxiv": "2601.20959",
+            "files": ["String_wrapping_blackhole.png"],
+            "image": "Research/bagchi-2601-20959.webp",
+        },
+    ],
+    
     # ---------------------------------------------------------- Particle Theory
     "theory": [
         {
@@ -320,130 +445,6 @@ FIGURES = {
         },
     ],
 
-    # ------------------------------------------------------------ String Theory
-    "string": [
-        {
-            "faculty": "Tapobrata Sarkar",
-            "caption": "Simulated debris of a star 0.55 days after it is disrupted by a black hole "
-                       "(left) and by a wormhole (right) of the same mass.",
-            "paper": "Relativistic Tidal Disruption in Black Hole and Wormhole Backgrounds",
-            "arxiv": "2603.26442",
-            "files": ["bh_late.png", "wh_late.png"],
-            "image": "Research/sarkar-2603-26442.webp",
-        },
-        {
-            "faculty": "Arjun Bagchi",
-            "caption": "A heuristic picture of an acoustic black hole: a flat band of waves sits on "
-                       "the horizon while Poincaré waves fluctuate around it.",
-            "paper": "Carroll in Shallow Water",
-            "arxiv": "2411.04190",
-            "files": ["wave-bh.png"],
-            "image": "Research/bagchi-2411-04190.webp",
-        },
-        {
-            "faculty": "Gautam Sengupta",
-            "caption": "A black string with a brane (red), the Hartman–Maldacena surface (blue) and "
-                       "the island surfaces (green) used to compute entropies holographically.",
-            "paper": "Reflected entropy in BCFTs on a black hole background",
-            "arxiv": "2311.17023",
-            "files": ["Braneworld-eps-converted-to.png"],
-            "image": "Research/sengupta-2311-17023.webp",
-        },
-        {
-            "faculty": "Diptarka Das",
-            "caption": "Snapshots of the time evolution of the classical string profile behind a "
-                       "class of string scattering amplitudes.",
-            "paper": "Classical string profile for a class of DDF amplitudes",
-            "arxiv": "2506.23974",
-            "files": ["figure.png"],
-            "image": "Research/das-2506-23974.webp",
-        },
-        # {
-        #     "faculty": "Apratim Kaviraj",
-        #     "caption": "Renormalisation-group flow of a disordered surface defect in the Ising "
-        #                "model, with two ordered fixed points (red) and one disordered (blue).",
-        #     "paper": "Ising surface defects can get dirty",
-        #     "arxiv": "2605.22628",
-        #     "files": ["flowplot2.png"],
-        #     "image": "Research/kaviraj-2605-22628.webp",
-        # },
-        {
-            "faculty": "Arjun Bagchi",
-            "caption": "A Penrose diagram of the Schwarzschild black hole with its near-horizon "
-                       "region in blue; the inset shows how the horizon is reached from it.",
-            "paper": "Black hole Near Horizons through the Looking Glass",
-            "arxiv": "2602.20267",
-            "files": ["Penrose.png"],
-            "image": "Research/bagchi-2602-20267.webp",
-        },
-        # {
-        #     "faculty": "Nilay Kundu",
-        #     "caption": "The maximal analytic extension of the self-similar charged Vaidya "
-        #                "spacetime; dashed lines mark surfaces of constant z.",
-        #     "paper": "Homothetic Killing horizons in generic Vaidya spacetimes",
-        #     "arxiv": "2604.09760",
-        #     "files": ["RNV_1_alt.png"],
-        #     "image": "Research/kundu-2604-09760.webp",
-        # },
-                {
-            "faculty": "Nilay Kundu",
-            "caption": "A ground-state wave function built from a Euclidean path integral, and its "
-                       "optimisation, which turns out to be described by hyperbolic (anti-de Sitter) "
-                       "geometry; right, the matching tensor network.",
-            "paper": "Anti-de Sitter Space from Optimization of Path Integrals in Conformal Field Theories",
-            "arxiv": "1703.00456",
-            "files": ["pathintegral.png"],
-            "image": "Research/kundu-1703-00456.webp",
-        },
-        {
-            "faculty": "Apratim Kaviraj",
-            "caption": "The phase diagram of the three-dimensional Ising model with a boundary, "
-                       "whose transitions are followed with a truncated bootstrap.",
-            "paper": "Truncated Polyakov bootstrap for BCFTs: Neumann-Dirichlet flow and Ising "
-                     "special transition",
-            "arxiv": "2609.07841",
-            "files": ["surface_critical_phase_diagram_final.png"],
-            "image": "Research/kaviraj-2609-07841.webp",
-        },
-        {
-            "faculty": "Gautam Sengupta",
-            "caption": "A boosted interval (orange) across the interface of a Janus-deformed field "
-                       "theory, with the minimal geodesic (green) that gives its holographic "
-                       "entanglement entropy.",
-            "paper": "Holographic Entanglement Entropy in Janus deformed AdS3 Geometries",
-            "arxiv": "2512.06374",
-            "files": ["subsystem.png"],
-            "image": "Research/sengupta-2512-06374.webp",
-        },
-        # {
-        #     "faculty": "Diptarka Das",
-        #     "caption": "Energy density in a periodically driven conformal field theory: it "
-        #                "localises in the heating phase (left) and oscillates in the non-heating phase (right).",
-        #     "paper": "Exactly Solvable Floquet Dynamics for Conformal Field Theories in "
-        #              "Dimensions Greater than Two",
-        #     "arxiv": "2311.13468",
-        #     "files": ["fig5a.png"],
-        #     "image": "Research/das-2311-13468.webp",
-        # },
-        {
-            "faculty": "Tapobrata Sarkar",
-            "caption": "Simulated debris of a white-dwarf binary falling onto an intermediate-mass "
-                       "black hole: before, shortly after and long after it fragments.",
-            "paper": "Tidal disruptions of close white dwarf binaries by intermediate mass black holes",
-            "arxiv": "2508.03463",
-            "files": ["clump_1.png", "clump_2.png", "clump_3.png"],
-            "image": "Research/sarkar-2508-03463.webp",
-        },
-        {
-            "faculty": "Arjun Bagchi",
-            "caption": "A heuristic sketch of a class of Carroll (tensionless) strings wrapping "
-                       "around the event horizon of a black hole.",
-            "paper": "The Tensionless Lives of Null Strings",
-            "arxiv": "2601.20959",
-            "files": ["String_wrapping_blackhole.png"],
-            "image": "Research/bagchi-2601-20959.webp",
-        },
-    ],
 }
 
 
