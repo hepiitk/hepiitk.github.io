@@ -323,6 +323,15 @@ FIGURES = {
     # ------------------------------------------------------------ String Theory
     "string": [
         {
+            "faculty": "Tapobrata Sarkar",
+            "caption": "Simulated debris of a star 0.55 days after it is disrupted by a black hole "
+                       "(left) and by a wormhole (right) of the same mass.",
+            "paper": "Relativistic Tidal Disruption in Black Hole and Wormhole Backgrounds",
+            "arxiv": "2603.26442",
+            "files": ["bh_late.png", "wh_late.png"],
+            "image": "Research/sarkar-2603-26442.webp",
+        },
+        {
             "faculty": "Arjun Bagchi",
             "caption": "A heuristic picture of an acoustic black hole: a flat band of waves sits on "
                        "the horizon while Poincaré waves fluctuate around it.",
@@ -349,24 +358,15 @@ FIGURES = {
             "files": ["figure.png"],
             "image": "Research/das-2506-23974.webp",
         },
-        {
-            "faculty": "Tapobrata Sarkar",
-            "caption": "Simulated debris of a star 0.55 days after it is disrupted by a black hole "
-                       "(left) and by a wormhole (right) of the same mass.",
-            "paper": "Relativistic Tidal Disruption in Black Hole and Wormhole Backgrounds",
-            "arxiv": "2603.26442",
-            "files": ["bh_late.png", "wh_late.png"],
-            "image": "Research/sarkar-2603-26442.webp",
-        },
-        {
-            "faculty": "Apratim Kaviraj",
-            "caption": "Renormalisation-group flow of a disordered surface defect in the Ising "
-                       "model, with two ordered fixed points (red) and one disordered (blue).",
-            "paper": "Ising surface defects can get dirty",
-            "arxiv": "2605.22628",
-            "files": ["flowplot2.png"],
-            "image": "Research/kaviraj-2605-22628.webp",
-        },
+        # {
+        #     "faculty": "Apratim Kaviraj",
+        #     "caption": "Renormalisation-group flow of a disordered surface defect in the Ising "
+        #                "model, with two ordered fixed points (red) and one disordered (blue).",
+        #     "paper": "Ising surface defects can get dirty",
+        #     "arxiv": "2605.22628",
+        #     "files": ["flowplot2.png"],
+        #     "image": "Research/kaviraj-2605-22628.webp",
+        # },
         {
             "faculty": "Arjun Bagchi",
             "caption": "A Penrose diagram of the Schwarzschild black hole with its near-horizon "
@@ -376,25 +376,55 @@ FIGURES = {
             "files": ["Penrose.png"],
             "image": "Research/bagchi-2602-20267.webp",
         },
-        {
+        # {
+        #     "faculty": "Nilay Kundu",
+        #     "caption": "The maximal analytic extension of the self-similar charged Vaidya "
+        #                "spacetime; dashed lines mark surfaces of constant z.",
+        #     "paper": "Homothetic Killing horizons in generic Vaidya spacetimes",
+        #     "arxiv": "2604.09760",
+        #     "files": ["RNV_1_alt.png"],
+        #     "image": "Research/kundu-2604-09760.webp",
+        # },
+                {
             "faculty": "Nilay Kundu",
-            "caption": "The maximal analytic extension of the self-similar charged Vaidya "
-                       "spacetime; dashed lines mark surfaces of constant z.",
-            "paper": "Homothetic Killing horizons in generic Vaidya spacetimes",
-            "arxiv": "2604.09760",
-            "files": ["RNV_1_alt.png"],
-            "image": "Research/kundu-2604-09760.webp",
+            "caption": "A ground-state wave function built from a Euclidean path integral, and its "
+                       "optimisation, which turns out to be described by hyperbolic (anti-de Sitter) "
+                       "geometry; right, the matching tensor network.",
+            "paper": "Anti-de Sitter Space from Optimization of Path Integrals in Conformal Field Theories",
+            "arxiv": "1703.00456",
+            "files": ["pathintegral.png"],
+            "image": "Research/kundu-1703-00456.webp",
         },
         {
-            "faculty": "Diptarka Das",
-            "caption": "Energy density in a periodically driven conformal field theory: it "
-                       "localises in the heating phase (left) and oscillates in the non-heating phase (right).",
-            "paper": "Exactly Solvable Floquet Dynamics for Conformal Field Theories in "
-                     "Dimensions Greater than Two",
-            "arxiv": "2311.13468",
-            "files": ["fig5a.png"],
-            "image": "Research/das-2311-13468.webp",
+            "faculty": "Apratim Kaviraj",
+            "caption": "The phase diagram of the three-dimensional Ising model with a boundary, "
+                       "whose transitions are followed with a truncated bootstrap.",
+            "paper": "Truncated Polyakov bootstrap for BCFTs: Neumann-Dirichlet flow and Ising "
+                     "special transition",
+            "arxiv": "2609.07841",
+            "files": ["surface_critical_phase_diagram_final.png"],
+            "image": "Research/kaviraj-2609-07841.webp",
         },
+        {
+            "faculty": "Gautam Sengupta",
+            "caption": "A boosted interval (orange) across the interface of a Janus-deformed field "
+                       "theory, with the minimal geodesic (green) that gives its holographic "
+                       "entanglement entropy.",
+            "paper": "Holographic Entanglement Entropy in Janus deformed AdS3 Geometries",
+            "arxiv": "2512.06374",
+            "files": ["subsystem.png"],
+            "image": "Research/sengupta-2512-06374.webp",
+        },
+        # {
+        #     "faculty": "Diptarka Das",
+        #     "caption": "Energy density in a periodically driven conformal field theory: it "
+        #                "localises in the heating phase (left) and oscillates in the non-heating phase (right).",
+        #     "paper": "Exactly Solvable Floquet Dynamics for Conformal Field Theories in "
+        #              "Dimensions Greater than Two",
+        #     "arxiv": "2311.13468",
+        #     "files": ["fig5a.png"],
+        #     "image": "Research/das-2311-13468.webp",
+        # },
         {
             "faculty": "Tapobrata Sarkar",
             "caption": "Simulated debris of a white-dwarf binary falling onto an intermediate-mass "
