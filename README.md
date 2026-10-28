@@ -2,7 +2,7 @@
 
 The website of the High Energy Physics group, Department of Physics, IIT Kanpur.
 
-**Live site → <https://hepiitk.github.io/website/>**
+**Live site → <https://hepiitk.github.io/>**
 
 The site is plain HTML and CSS, written by **five small Python scripts** in the
 `_source/` folder. The names, photos, news, dates and links sit in simple lists
@@ -76,11 +76,11 @@ You only do this once per computer.
 ### 1.1 Get access to the repository
 
 1. Make a free account at <https://github.com> if you don't have one.
-2. Send your GitHub username to a current editor (see [contact.html](https://hepiitk.github.io/website/contact.html))
+2. Send your GitHub username to a current editor (see [contact.html](https://hepiitk.github.io/contact.html))
    and ask them to give you **write access** to `hepiitk/website`.
    *They do this on GitHub: the repository → **Settings** → **Collaborators** → **Add people**.*
 3. Accept the invitation from the email GitHub sends you, or at
-   <https://github.com/hepiitk/website/invitations>.
+   <https://github.com/hepiitk/invitations>.
 
 ### 1.2 Install the tools
 
@@ -266,9 +266,9 @@ This pushes your commit to GitHub and also pulls anything new.
 
 Then check that it's live:
 
-1. Go to <https://github.com/hepiitk/website> and wait for the small **yellow dot**
+1. Go to <https://github.com/hepiitk/> and wait for the small **yellow dot**
    next to the latest commit to turn into a **green tick ✓**. That takes about 1–2 minutes.
-2. Open <https://hepiitk.github.io/website/> and do a **hard refresh**
+2. Open <https://hepiitk.github.io/> and do a **hard refresh**
    (`Ctrl+Shift+R`) so your browser doesn't show an old copy.
 
 That's the whole routine.
@@ -823,7 +823,7 @@ To avoid conflicts: **pull before you start**, keep each change small, and
 ### "My change isn't showing on the live site"
 
 1. Did you run the script, and commit the **`.html`** file, not just the `.py`?
-2. On <https://github.com/hepiitk/website>, check that your commit is there with a **green tick ✓**.
+2. On <https://github.com/hepiitk>, check that your commit is there with a **green tick ✓**.
    A **red ✗** means publishing failed: click it to see why, or ask another editor.
 3. Hard-refresh the page: `Ctrl+Shift+R`.
 4. Wait two minutes and try again.
@@ -902,5 +902,5 @@ git clone https://github.com/hepiitk/website.git
 ## Maintainers
 
 The site is maintained by the group's editor team. See
-[contact.html](https://hepiitk.github.io/website/contact.html). Questions,
+[contact.html](https://hepiitk.github.io/contact.html). Questions,
 corrections and news go to **hepiitk@gmail.com**.
