@@ -6,20 +6,25 @@ The website of the High Energy Physics group, Department of Physics, IIT Kanpur.
 
 The site is plain HTML and CSS, written by **five small Python scripts** in the
 `_source/` folder. The names, photos, news, dates and links sit in simple lists
-inside them. To update a page you edit the list, run the script, and push the
-result to GitHub. About a minute later the live site updates.
+inside them. To update a page you edit the list, run the script, push the
+result to the **`web`** branch on GitHub, and then merge it into **`main`** with a
+**pull request**. About a minute after the merge, the live site updates.
+
+**Repository → <https://github.com/hepiitk/hepiitk.github.io>**
 
 This guide is written for a new editor who has never used Git, Python or edited a
-website before. Read Part 1 once to get set up. After that you only need
-Part 2 (the everyday routine) and Part 3 (how to update each page).
+website before. Read [How the site is published](#how-the-site-is-published) and Part 1 once to
+get set up. After that you only need Part 2 (the everyday routine) and Part 3
+(how to update each page).
 
 ---
 
 ## Contents
 
 - [Where everything is](#where-everything-is)
+- [How the site is published: the `web` and `main` branches](#how-the-site-is-published)
 - [Part 1 — One-time setup](#part-1--one-time-setup)
-- [Part 2 — The everyday routine: pull → edit → build → check → commit → push](#part-2--the-everyday-routine)
+- [Part 2 — The everyday routine: pull → edit → build → check → commit → push → pull request → merge](#part-2--the-everyday-routine)
 - [Part 3 — How to update each page](#part-3--how-to-update-each-page)
 - [Part 4 — When something goes wrong](#part-4--when-something-goes-wrong)
 - [Part 5 — Quick reference](#part-5--quick-reference)
@@ -69,6 +74,38 @@ assets/img/         Line drawings beside page titles and on the Home page cards
 
 ---
 
+## How the site is published
+
+The repository has two branches (two versions of the site side by side):
+
+| Branch | What it is | Who can change it |
+|---|---|---|
+| **`main`** | **The live site.** GitHub Pages publishes whatever is on `main` to <https://hepiitk.github.io/>. | Nobody pushes to it directly. Changes reach it **only through a pull request**. |
+| **`web`** | **The shared working branch.** Editors commit and push their changes here. Pushing to `web` does **not** change the live site. | Every editor. |
+| *your own branch* (optional) | A separate copy for a bigger or experimental change, e.g. `new-research-figures`. See [Working on your own branch](#working-on-your-own-branch). | Whoever made it. |
+
+```
+ your computer ──push──▶  web  (or your own branch) ──pull request + merge──▶  main ──▶  hepiitk.github.io
+```
+
+**Who can do what.**
+
+| Who | Role on the repository | Can |
+|---|---|---|
+| The **editor** team (`@hepiitk/editor`) | Maintain | push to `web` and to their own branches, open pull requests into `main`, and merge them |
+| Repository and organisation admins | Admin | the same, plus the repository settings |
+
+**The rules on `main`** (a *ruleset* named **main**, under **Settings → Rules → Rulesets**):
+
+- **A pull request is required.** Every change to `main` comes from another branch through a pull request.
+- **No approval is needed.** You can merge your own pull request. For a big change, ask another editor to look at it first anyway.
+- **The merge method is *Merge*.** The **Merge pull request** button keeps every commit.
+- **`main` can't be deleted or force-pushed.**
+- Admins are on the ruleset's *bypass list*, so GitHub would let them push straight to `main`.
+  **Please use a pull request anyway**, so every change to the live site is recorded in one place.
+
+---
+
 ## Part 1 — One-time setup
 
 You only do this once per computer.
@@ -77,10 +114,11 @@ You only do this once per computer.
 
 1. Make a free account at <https://github.com> if you don't have one.
 2. Send your GitHub username to a current editor (see [contact.html](https://hepiitk.github.io/contact.html))
-   and ask them to give you **write access** to `hepiitk/website`.
-   *They do this on GitHub: the repository → **Settings** → **Collaborators** → **Add people**.*
-3. Accept the invitation from the email GitHub sends you, or at
-   <https://github.com/hepiitk/invitations>.
+   and ask an admin to add you to the **editor** team of the `hepiitk` organisation.
+   The team has the **Maintain** role on the repository, which is everything an editor needs.
+   *An admin does this on GitHub: <https://github.com/orgs/hepiitk/teams/editor> → **Add a member**.*
+3. Accept the invitation from the email GitHub sends you. You can also accept it on
+   <https://github.com/hepiitk> while signed in.
 
 ### 1.2 Install the tools
 
@@ -139,6 +177,13 @@ git config --global user.email "your-email@iitk.ac.in"
 Use the same email as your GitHub account if you can. Your commits then show up
 on your GitHub profile.
 
+Also run this once. It tells Git to *merge* when you pull changes that someone
+else made, so a pull never stops with a question about "divergent branches":
+
+```bash
+git config --global pull.rebase false
+```
+
 ### 1.4 Download (clone) the website to your computer
 
 1. Open VS Code.
@@ -147,26 +192,35 @@ on your GitHub profile.
 3. Click **Clone Repository**. Alternatively, press `Ctrl+Shift+P`, type **Git: Clone** and press Enter.
 4. Paste this address and press Enter:
    ```
-   https://github.com/hepiitk/website.git
+   https://github.com/hepiitk/hepiitk.github.io.git
    ```
 5. Choose a folder to keep it in, for example `Documents`. A folder called
-   `website` is created there.
+   `hepiitk.github.io` is created there.
 6. When VS Code asks **"Would you like to open the cloned repository?"**, click **Open**.
 7. The first time you push, VS Code asks you to **sign in to GitHub**. Click
    **Allow**, finish the sign-in in your browser, then come back to VS Code.
 
-You now have your own copy of the site. You won't need to clone again.
+8. **Switch to the `web` branch.** The bottom-left corner of VS Code shows the
+   branch you're on, probably `main`. Click it, and in the list that opens choose
+   **`origin/web`**. VS Code makes a local `web` branch linked to the one on
+   GitHub. The bottom-left corner now says **`web`**.
+
+You now have your own copy of the site. You won't need to clone again. VS Code
+remembers the branch, so next time it opens on `web`.
 
 ---
 
 ## Part 2 — The everyday routine
 
-Every time you update the site, follow these six steps in this order.
+Every time you update the site, follow these eight steps in this order. Steps
+1–6 happen in VS Code on the **`web`** branch. Steps 7–8 happen on the GitHub
+website and are what put the change on the live site.
 
 ```
- 1. PULL  →  2. EDIT   →  3. BUILD   →  4. CHECK   →  5. COMMIT  →  6. PUSH
- (get the    (change the   (run the     (look at it   (save a       (send it to
-  latest)     script)       script)      in a browser) snapshot)     GitHub)
+ 1. PULL  →  2. EDIT  →  3. BUILD  →  4. CHECK  →  5. COMMIT  →  6. PUSH  →  7. PULL REQUEST  →  8. MERGE
+ (get the    (change     (run the     (look at it  (save a       (send it    (ask to copy        (copy it to
+  latest)     the         script)      in a         snapshot)     to web on   web into main)      main: it goes
+              script)                  browser)                   GitHub)                         live)
 ```
 
 ### Step 1 — Pull: get the latest version first
@@ -174,9 +228,12 @@ Every time you update the site, follow these six steps in this order.
 Other editors may have changed the site since you last worked on it. Always pull
 before you start, or you'll end up editing an old copy.
 
-- In VS Code, open the **website** folder (**File → Open Recent**).
+- In VS Code, open the **hepiitk.github.io** folder (**File → Open Recent**).
+- Check that the bottom-left corner says **`web`**. If it says `main`, click it and
+  choose `web` (see [1.4](#14-download-clone-the-website-to-your-computer), step 8).
+  **Never work on `main`**: GitHub refuses pushes to it.
 - Go to **Source Control** → click **⋯** (*Views and More Actions*) at the top of the panel → **Pull**.
-- Or click the **circular arrows** next to the branch name `main` in the bottom-left status bar.
+- Or click the **circular arrows** next to the branch name `web` in the bottom-left status bar.
 
 ### Step 2 — Edit the page's script
 
@@ -199,8 +256,8 @@ Part 3 shows exactly what to change for each task. Save with `Ctrl+S`.
 
 ### Step 3 — Build: run the script
 
-In the VS Code terminal (**Terminal → New Terminal**; it opens in the `website`
-folder), run the script you edited:
+In the VS Code terminal (**Terminal → New Terminal**; it opens in the
+`hepiitk.github.io` folder), run the script you edited:
 
 ```bash
 python3 _source/build_members.py
@@ -259,19 +316,75 @@ Check that:
 > script, then stage the `.html` files too. GitHub publishes the `.html` files,
 > not the scripts.
 
-### Step 6 — Push: publish it
+You can make several commits on `web` (one per change) before going on to
+Step 6, or push after each one.
+
+### Step 6 — Push: send it to the `web` branch
 
 After committing, the blue button changes to **Sync Changes ↑1**. Click it.
-This pushes your commit to GitHub and also pulls anything new.
+This pushes your commit to the `web` branch on GitHub and also pulls anything new.
 
-Then check that it's live:
+**The live site has not changed yet.** Your commit is now on `web`, waiting to be
+merged into `main`.
 
-1. Go to <https://github.com/hepiitk/> and wait for the small **yellow dot**
-   next to the latest commit to turn into a **green tick ✓**. That takes about 1–2 minutes.
-2. Open <https://hepiitk.github.io/> and do a **hard refresh**
-   (`Ctrl+Shift+R`) so your browser doesn't show an old copy.
+### Step 7 — Open a pull request from `web` into `main`
+
+A *pull request* (PR) is GitHub's way of saying "please copy these commits from
+`web` into `main`". It shows exactly what will change before anything goes live.
+
+1. Open <https://github.com/hepiitk/hepiitk.github.io>.
+2. **If a pull request from `web` is already open**, you don't need a new one: the
+   **Pull requests** tab shows it (for example *#1*), and your new commits have
+   been added to it automatically. Go to Step 8.
+3. Otherwise, GitHub shows a yellow bar *"web had recent pushes"*. Click
+   **Compare & pull request**. If the bar isn't there: **Pull requests** tab →
+   **New pull request**, then set **base: `main`** ← **compare: `web`**.
+4. Give it a title saying what changed (e.g. `Add Priya Nair to graduate students`)
+   and click **Create pull request**.
+5. Open the **Files changed** tab and check that only what you meant to change is there.
+
+### Step 8 — Merge: put it on the live site
+
+1. On the pull request page, click **Merge pull request** → **Confirm merge**.
+   No approval is needed, so you can merge your own pull request. For a big
+   change, ask another editor to look at the **Files changed** tab first.
+2. GitHub then offers a **Delete branch** button. **Don't delete `web`**: everyone
+   works on it. (Deleting your *own* branch after its merge is fine.)
+3. Check that it's live:
+   - Open the repository's **Actions** tab. The newest run, **pages build and
+     deployment**, turns from a **yellow dot** into a **green tick ✓** in about
+     1–2 minutes. (You can also see it under **Deployments → github-pages** on the
+     repository's front page.)
+   - Open <https://hepiitk.github.io/> and do a **hard refresh**
+     (`Ctrl+Shift+R`) so your browser doesn't show an old copy.
+
+> **The Merge button is grey?**
+> - *"This branch is out-of-date with the base branch"*: click **Update branch**,
+>   then merge. Then **Pull** in VS Code before your next edit.
+> - *"This branch has conflicts that must be resolved"*: see
+>   [Merge conflict](#merge-conflict) in Part 4.
 
 That's the whole routine.
+
+### Working on your own branch
+
+For a bigger change that will take several days, or one you want someone to
+look at before it goes live (a new page layout, a batch of research figures),
+make your own branch instead of using `web`:
+
+1. Click the branch name in the bottom-left corner → **Create new branch from…** →
+   choose **`origin/main`** → type a short name with hyphens, e.g.
+   `new-research-figures`, and press Enter.
+2. Work as usual (Steps 2–5).
+3. The first time, the **Sync Changes** button says **Publish Branch**. Click it.
+4. Open a pull request with **base: `main`** ← **compare: `new-research-figures`**
+   (Step 7), and merge it when it's ready (Step 8). This time you *can* click
+   **Delete branch** afterwards.
+5. Back in VS Code, click the branch name and switch back to **`web`**, then **Pull**.
+
+> If someone merged their own branch into `main`, `web` no longer has their
+> changes. GitHub shows this on your next pull request as *"out-of-date"*;
+> click **Update branch** there (Step 8) and then **Pull** in VS Code.
 
 ---
 
@@ -693,7 +806,7 @@ missing, install it with:
 sudo apt install imagemagick
 ```
 
-Then, in the `website` folder, with the original photo saved there as
+Then, in the `hepiitk.github.io` folder, with the original photo saved there as
 `priya-nair.jpg` (already named after the person, see step 2 below):
 
 ```bash
@@ -710,7 +823,7 @@ mogrify -path assets/Members -resize 600x600\> -quality 85 -format webp priya-na
 
 The result is `assets/Members/priya-nair.webp`. Check its size with
 `ls -lh assets/Members/priya-nair.webp`, then delete the original `.jpg` from
-the `website` folder so you don't commit it by accident.
+the `hepiitk.github.io` folder so you don't commit it by accident.
 
 - **Several photos at once:** `mogrify -path assets/Members -resize 600x600\> -quality 85 -format webp *.jpg`
 - **A symposium poster:** keep it larger so the text stays readable:
@@ -744,6 +857,11 @@ You *can* fix a typo straight in an `.html` file (or with the pencil ✏️ on
 GitHub). It works, but **it will be overwritten** the next time anyone runs that
 page's script. If you do it, make the **same change in the script** in the same
 commit, so nothing is lost later.
+
+On GitHub, switch to the **`web`** branch first (the branch menu above the file
+list), then click the pencil. If you start from `main`, GitHub won't let you commit
+there. Instead it offers to **create a new branch for this commit and start a
+pull request**, which also works. Either way, finish with Steps 7–8.
 
 ---
 
@@ -796,14 +914,31 @@ the files, so you can fix them and commit again.
 
 ### "I already pushed a mistake"
 
-Fix the script, run it, then commit and push again as usual. That's the simplest
-way. Every earlier version is kept on GitHub (open the file on GitHub → **History**),
+- **Pushed to `web` but not merged yet:** fix the script, run it, then commit and
+  push again. The open pull request picks up the fix by itself.
+- **Already merged into `main` (it's on the live site):** fix it on `web` as usual
+  and open a new pull request (Steps 7–8). To undo a whole merge quickly, open the
+  merged pull request on GitHub and click **Revert**. GitHub makes a new pull
+  request that undoes it, and you merge that.
+
+Every earlier version is kept on GitHub (open the file on GitHub → **History**),
 so nothing is ever truly lost.
 
 ### "Push was rejected" / "Updates were rejected because the remote contains work…"
 
-Someone else pushed while you were working. Click **⋯ → Pull**, then **Sync
-Changes** again. Usually that's all it takes.
+Someone else pushed to `web` while you were working. Click **⋯ → Pull**, then
+**Sync Changes** again. Usually that's all it takes.
+
+### "Push declined … Changes must be made through a pull request" (GH013)
+
+You committed on **`main`**, which only accepts pull requests. Your work is not
+lost:
+
+1. Click the branch name in the bottom-left corner → **Create new branch…** and
+   name it, e.g. `my-fix`. The new branch keeps your commits.
+2. Click **Publish Branch**.
+3. Open a pull request from `my-fix` into `main` and merge it (Steps 7–8).
+4. Switch back to **`web`** and **Pull** before your next change.
 
 ### "Merge conflict"
 
@@ -817,16 +952,25 @@ marks the file with a **!** and shows both versions:
   script, then run it again. That rewrites the page cleanly.
 - Save, **Stage** (**+**), **Commit**, then **Sync Changes**.
 
+**On GitHub** a conflict shows up on the pull request as *"This branch has
+conflicts that must be resolved"*. Resolve it in VS Code: on the `web` branch,
+**⋯ → Pull**, then **⋯ → Branch → Merge…** → choose **`origin/main`**. Fix the
+conflicts as above, then commit and **Sync Changes**. The pull request updates and
+can be merged.
+
 To avoid conflicts: **pull before you start**, keep each change small, and
-**push as soon as you're done**.
+**push and merge as soon as you're done**.
 
 ### "My change isn't showing on the live site"
 
-1. Did you run the script, and commit the **`.html`** file, not just the `.py`?
-2. On <https://github.com/hepiitk>, check that your commit is there with a **green tick ✓**.
-   A **red ✗** means publishing failed: click it to see why, or ask another editor.
-3. Hard-refresh the page: `Ctrl+Shift+R`.
-4. Wait two minutes and try again.
+1. **Did you merge the pull request into `main`?** Pushing to `web` alone does not
+   publish anything. Check the **Pull requests** tab (Steps 7–8).
+2. Did you run the script, and commit the **`.html`** file, not just the `.py`?
+3. In the repository's **Actions** tab, check that the newest **pages build and
+   deployment** run has a **green tick ✓**. A **red ✗** means publishing failed:
+   click it to see why, or ask another editor.
+4. Hard-refresh the page: `Ctrl+Shift+R`.
+5. Wait two minutes and try again.
 
 ### "A photo shows only initials"
 
@@ -855,19 +999,24 @@ The first four also refresh the Home page (`index.html`) every time.
 
 | Step | Where |
 |---|---|
+| Check / switch branch | bottom-left corner of VS Code: it should say **`web`** |
 | Pull | Source Control → **⋯** → **Pull** |
 | Build | open the script → **▶ Run Python File**, or type the command in the terminal |
 | Preview | right-click an `.html` file → **Open with Live Server** |
 | See your changes | Source Control → click a file under **Changes** |
 | Stage | **+** next to **Changes** |
 | Commit | type a message → **✓ Commit** |
-| Push | **Sync Changes** |
+| Push to `web` | **Sync Changes** |
+| Pull request | GitHub → **Compare & pull request** (base `main` ← compare `web`), or the one already open |
+| Publish | on the pull request → **Merge pull request** → **Confirm merge** (don't delete `web`) |
+| Check it's live | GitHub → **Actions** → green tick ✓, then `Ctrl+Shift+R` on the site |
 
 ### The same thing in a terminal
 
-Run these in the `website` folder (VS Code: **Terminal → New Terminal**):
+Run these in the `hepiitk.github.io` folder (VS Code: **Terminal → New Terminal**):
 
 ```bash
+git switch web                             # make sure you're on the web branch
 git pull                                   # 1. get the latest
 mogrify -path assets/Members -resize 600x600\> -quality 85 -format webp priya-nair.jpg  # shrink a new photo
 # … edit the script and save …
@@ -876,18 +1025,32 @@ git status                                 # see which files changed
 git diff                                   # see exactly what changed (press q to quit)
 git add .                                  # 3. stage everything you changed
 git commit -m "Add Priya Nair to students" # 4. commit with a message
-git push                                   # 5. publish
+git push                                   # 5. send it to web on GitHub
 git log --oneline -5                       # the last five commits
+```
+
+Then open the pull request and merge it on GitHub (Steps 7–8).
+
+Your own branch, made from `main`:
+
+```bash
+git fetch
+git switch -c new-research-figures origin/main   # make the branch and switch to it
+# … edit, build, commit as above …
+git push -u origin new-research-figures          # the first push of a new branch
 ```
 
 Download the site on a new computer:
 
 ```bash
-git clone https://github.com/hepiitk/website.git
+git clone https://github.com/hepiitk/hepiitk.github.io.git
+cd hepiitk.github.io
+git switch web
 ```
 
 ### Before you push — checklist
 
+- [ ] I'm on the **`web`** branch (or my own branch), **not `main`**.
 - [ ] I pulled before I started.
 - [ ] I edited the **script**, not the `.html` file, and I **ran** it with no errors.
 - [ ] I previewed the page in a browser and it looks right.
@@ -896,11 +1059,22 @@ git clone https://github.com/hepiitk/website.git
 - [ ] New research figures look right in their slideshow, and unused ones are deleted from `assets/Research/`.
 - [ ] I'm committing the `.py` file, the `.html` file(s) it wrote, and any new images.
 - [ ] My commit message says what I changed.
+- [ ] After pushing, I opened (or reused) the pull request into `main`, checked
+      **Files changed**, merged it, and the **pages build and deployment** run is green.
 
 ---
 
 ## Maintainers
 
-The site is maintained by the group's editor team. See
-[contact.html](https://hepiitk.github.io/contact.html). Questions,
+The site is maintained by the group's editor team (`@hepiitk/editor` on GitHub).
+See [contact.html](https://hepiitk.github.io/contact.html). Questions,
 corrections and news go to **hepiitk@gmail.com**.
+
+**For admins:**
+
+- **Add an editor:** <https://github.com/orgs/hepiitk/teams/editor> → **Add a member**.
+  Remember to add them to `EDITORS` in `build_all.py` too, so they appear on the Contact page.
+- **Remove an editor:** remove them from the team. They keep read access as members of
+  the organisation, but can no longer push.
+- **Protection of `main`:** repository **Settings → Rules → Rulesets → main**.
+- **Publishing:** repository **Settings → Pages**. The site is built from the `main` branch.
