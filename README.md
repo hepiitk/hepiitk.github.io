@@ -95,7 +95,7 @@ The repository has two branches (two versions of the site side by side):
 | The **editor** team (`@hepiitk/editor`) | Maintain | push to `web` and to their own branches, open pull requests into `main`, and merge them |
 | Repository and organisation admins | Admin | the same, plus the repository settings |
 
-**The rules on `main`** (a *ruleset* named **main**, under **Settings → Rules → Rulesets**):
+**The rules on `main`**:
 
 - **A pull request is required.** Every change to `main` comes from another branch through a pull request.
 - **No approval is needed.** You can merge your own pull request. For a big change, ask another editor to look at it first anyway.
