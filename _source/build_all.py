@@ -124,19 +124,15 @@ LOGO = "iitk-logo.svg"
 # Drawn artwork that ships with the site (assets/img/*.svg) — nothing to copy.
 # These are line engravings made for this site, in the same ink/maroon palette.
 ART = {
-    "theory": ("img/theory.svg", "One-loop Feynman diagram with an exchanged boson"),
-    "experiment": ("img/experiment.svg",
-                   "Cylindrical collider detector with a beam line and two jet cones"),
-    "string": ("img/string.svg",
-               "Anti-de Sitter cylinder with a boundary theory and a geodesic through the bulk"),
+    "string": ("img/string.svg", "Cartoon of an open string between two branes, a closed string and a black hole"),
+    "particle": ("img/particle.svg", "Cartoon of an electron and a positron exchanging a photon and becoming a quark pair"),
+    "experiment": ("img/experiment.svg", "Cartoon of a collider detector with particle tracks, and a laptop showing a peak"),
     "seminar": ("img/seminar.svg", "Blackboard with an equation and a lectern"),
     "symposium": ("img/symposium.svg", "Auditorium with a projection screen and rows of seats"),
     "news": ("img/news.svg", "Noticeboard with pinned announcements"),
     "contact": ("img/contact.svg", "A letter travelling towards the department building"),
-    "members": ("img/members.svg",
-                "Group members talking round a table, with portraits on the wall behind them"),
-    "research": ("img/research.svg",
-                 "An open notebook under a desk lamp, with a Feynman diagram and a plot with a peak"),
+    "members": ("img/members.svg", "Group members talking round a table, with portraits on the wall behind them"),
+    "research": ("img/research.svg", "An open notebook under a desk lamp, with a Feynman diagram and a plot with a peak"),
 }
 
 
