@@ -205,6 +205,8 @@ def fold(show, hide, inner, open=False):
 
 def head(title, desc, page):
     full = f"{title} · {SITE_SHORT}" if page != "index.html" else f"{SITE_NAME}"
+    url = "https://hepiitk.github.io/" if page == "index.html" else f"https://hepiitk.github.io/{page}"
+    gsc = '\n<meta name="google-site-verification" content="OSpNjTY2TTAVbXWjhnyjYFKbHjAqgBK_i39DOzeWIIg">' if page == "index.html" else ""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -212,10 +214,12 @@ def head(title, desc, page):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{full}</title>
 <meta name="description" content="{desc}">
-<meta name="theme-color" content="#fbfaf6">
+<meta name="theme-color" content="#fbfaf6">{gsc}
 <meta property="og:title" content="{full}">
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="website">
+<meta property="og:url" content="{url}">
+<link rel="canonical" href="{url}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">

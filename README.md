@@ -85,7 +85,7 @@ The repository has two branches (two versions of the site side by side):
 | *your own branch* (optional) | A separate copy for a bigger or experimental change, e.g. `new-research-figures`. See [Working on your own branch](#working-on-your-own-branch). | Whoever made it. |
 
 ```
- your computer ──push──▶  web  (or your own branch) ──pull request + merge──▶  main ──▶  hepiitk.github.io
+ your computer ──▶ push ──▶ web (or your own branch) ──▶ pull request + merge ──▶ main ──▶ hepiitk.github.io
 ```
 
 **Who can do what.**
