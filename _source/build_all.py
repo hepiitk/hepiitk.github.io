@@ -85,7 +85,7 @@ ICON = {
 }
 
 # Home page animation: two neutron stars spiral together, collide and blow out
-# a glowing kilonova cloud. Drawn by assets/merger.js on the <canvas> below;
+# a glowing kilonova cloud. Drawn by assets/js/collider.js on the <canvas> below;
 # its styles are in assets/style.css (search for ".merger").
 HERO_ART = """
 <div class="merger" role="img" aria-label="Animation of two neutron stars spiralling together, colliding and blowing out a glowing cloud of debris">
@@ -291,7 +291,7 @@ def footer():
     </div>
   </div>
 </footer>
-<script src="assets/app.js" defer></script>
+<script src="assets/js/app.js" defer></script>
 </body>
 </html>
 """
@@ -474,8 +474,8 @@ def build_index():
   </section>
 """
     body += footer().replace(
-        '<script src="assets/app.js" defer></script>',
-        '<script src="assets/app.js" defer></script>\n<script src="assets/merger.js" defer></script>')
+        '<script src="assets/js/app.js" defer></script>',
+        '<script src="assets/js/app.js" defer></script>\n<script src="assets/js/collider.js" defer></script>')
     write("index.html", body)
 
 

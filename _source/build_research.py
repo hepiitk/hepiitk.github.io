@@ -557,11 +557,11 @@ def build():
   </section>
 """
     body += footer().replace(
-        '<script src="assets/app.js" defer></script>',
-        '<script src="assets/app.js" defer></script>\n<script src="assets/carousel.js" defer></script>')
+        '<script src="assets/js/app.js" defer></script>',
+        '<script src="assets/js/app.js" defer></script>\n<script src="assets/js/carousel.js" defer></script>')
     write("research.html", body)
 
-
+    
 def fetch_figures(force=False):
     """Download every figure in FIGURES and save it as .webp.
 

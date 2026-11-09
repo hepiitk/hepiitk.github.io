@@ -52,9 +52,8 @@ _source/                  The five scripts that write the pages above
                             change: Home, Seminars, Contact.
 
 assets/style.css    The design: colours, fonts, spacing, layout (all pages share it)
-assets/app.js       Small scripts: mobile menu, member search, slide-in effects
-assets/carousel.js  The figure slideshows on the Research page
-assets/merger.js    The neutron-star animation on the Home page
+assets/js/          The small scripts that make things move (menu, search,
+                    slideshows, the Home page animation). You rarely need to touch them.
 assets/Members/     Member photos, named after the person: priya-nair.webp
 assets/ConferenceWorkshop/   Symposium posters: symposium-2026.webp
 assets/Research/    Figures for the Research slideshows (made by build_research.py --figures)
@@ -69,7 +68,7 @@ assets/img/         Line drawings beside page titles and on the Home page cards
 > `_source/build_news.py`, and so on.
 >
 > - `_source/` should contain **only these five `.py` files**.
-> - `assets/style.css` and the `.js` files in `assets/` are *not* written by any
+> - `assets/style.css` and the files in `assets/js/` are *not* written by any
 >   script, so you edit them directly.
 
 ---
@@ -691,7 +690,7 @@ can delete them.
 - **To remove a slide**, delete its block, run the script, and delete its `.webp`.
 - Commit the new files in `assets/Research/` together with `research.html`.
 - To change how long each slide stays up, edit `CAROUSEL_DELAY = 6000`
-  (milliseconds) at the top of `assets/carousel.js`.
+  (milliseconds) at the top of `assets/js/carousel.js`.
 
 ---
 
@@ -719,23 +718,11 @@ automatically from the other scripts, so you don't edit those here.
 
 #### The animation on the Home page
 
-The two neutron stars that spiral together, collide and leave a black hole,
-with the gravitational-wave signal drawn underneath, are drawn by
-**`assets/merger.js`**. `HERO_ART` in `build_all.py` only places it on the page,
-and its size is set by the `.merger` rules in `assets/style.css`.
-
-To change how it moves or looks, edit the `MERGER` settings at the top of
-`assets/merger.js`; no rebuild is needed, just refresh the page:
-
-| Setting | What it does |
-|---|---|
-| `cycle` | seconds for one full loop |
-| `inspiral` | seconds the stars orbit before they collide |
-| `turns` | how many orbits they make |
-| `starA`, `starB` | the two stars' colours, each as three RGB colours: highlight, body, rim |
-
-The animation pauses when it's scrolled off screen, and visitors who have
-"reduce motion" switched on see a still picture.
+The animation beside the Home page heading is drawn by a script in
+`assets/js/`, the one named in the `<script src="assets/js/…">` line in
+`build_all.py`. `HERO_ART` in `build_all.py` places it on the page and sets its
+size (the `.merger` rules). Its few settings are explained at the top of the
+script; after changing one, just refresh the page.
 
 #### The line drawings beside page titles
 
@@ -772,14 +759,9 @@ the design only if you're comfortable with CSS, and always preview several pages
 before pushing. Your browser may keep an old copy of `style.css`, so
 hard-refresh (`Ctrl+Shift+R`) after a change.
 
-Three small scripts in `assets/` add the moving parts. Like `style.css`, no
-build script writes them:
-
-| File | What it does |
-|---|---|
-| `app.js` | mobile menu, member search, the slide-in effect, the counting numbers |
-| `carousel.js` | the figure slideshows on the Research page |
-| `merger.js` | the neutron-star animation on the Home page |
+The moving parts (mobile menu, member search, slideshows, the Home page
+animation) are small scripts in `assets/js/`. Like `style.css`, no build script
+writes them, and you rarely need to change them.
 
 The size of the Home page heading and introduction is set in the hero section
 of `style.css` (search for `/* ---------- 5. Hero`): `.hero h1 { font-size: … }`
@@ -991,7 +973,7 @@ letters** and the **extension**. See [3.7](#37-photos-and-images).
 | symposia, conferences | `python3 _source/build_conferences.py` |
 | research areas or their figure slideshows | `python3 _source/build_research.py` (add `--figures` to download new figures) |
 | anything in `build_all.py` (menu, footer, e-mail, phone, Home text, Seminars, Contact, drawings list), or not sure | `python3 _source/build_all.py` |
-| `assets/style.css`, a `.js` file in `assets/`, or a drawing in `assets/img/` | nothing, just save and refresh |
+| `assets/style.css`, a file in `assets/js/`, or a drawing in `assets/img/` | nothing, just save and refresh |
 
 The first four also refresh the Home page (`index.html`) every time.
 
