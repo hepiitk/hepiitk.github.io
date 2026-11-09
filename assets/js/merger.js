@@ -1,17 +1,21 @@
 /* HEP@IITK — Home page animation.
-   Two neutron stars spiral together along engraved orbit paths, shed tidal
-   streams, collide in a burst and leave a black hole, while the gravitational-
+   Two neutron stars spiral together along engraved orbit paths, trailing
+   smooth glowing tails of stripped matter that flare into spiral arms as they
+   get close, collide in a burst and leave a black hole, while the gravitational-
    wave "chirp" a detector would record is drawn underneath, in step.
    Drawn on the <canvas> inside <div class="merger"> (HERO_ART in build_all.py).
    Plain JavaScript, no libraries. Pauses when off screen; visitors who prefer
-   reduced motion see one still frame.
+   reduced motion see one still frame. Kept light so phones and tablets run it
+   smoothly: a fixed number of particles, no special blending, and the parts
+   that never move are drawn only once.
 
    Things you can tune: */
 var MERGER = {
   cycle: 13,        // seconds for one full loop
   inspiral: 8,      // seconds the two stars orbit before they touch
   turns: 4,         // orbits during the inspiral
-  maxParticles: 2400,
+  tail: 1.6,        // tail length at the start, in radians of orbit (it grows as the stars close in)
+  maxParticles: 700,// puffs of stripped matter on screen at once (lower = lighter for old phones)
   // star colours: [highlight, body, rim] as R,G,B
   starA: [[255, 244, 214], [245, 158, 11], [194, 65, 12]],    // amber
   starB: [[232, 242, 255], [59, 130, 246], [30, 58, 138]]     // blue
@@ -30,17 +34,20 @@ var MERGER = {
   var A0 = 0.42;                    // starting distance of each star from the centre (unit disc)
   var WAVE = { x0: -0.5, x1: 0.5, y: 0.72, amp: 0.075, merge: 0.8 };  // the chirp graph
   var size = 0, scale = 0, dpr = 1;
-  var particles = [], ripples = [], layer = null, mask = null, backdrop = null, dots = [];
-  var t = 0, lastRipple = 0, merged = false;
+  var particles = [], ripples = [], dots = [];
+  var t = 0, lastRipple = 0, merged = false, owed = 0, G = 1;
   var running = false, onScreen = true, last = 0;
 
   function rand(a, b) { return a + Math.random() * (b - a); }
-  function rgba(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a.toFixed(3) + ")"; }
+  function rgba(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + Math.max(0, a).toFixed(3) + ")"; }
   function lerp(c1, c2, f) {
     return [Math.round(c1[0] + (c2[0] - c1[0]) * f), Math.round(c1[1] + (c2[1] - c1[1]) * f),
             Math.round(c1[2] + (c2[2] - c1[2]) * f)];
   }
   function X(x) { return scale + x * scale; }
+  // moving parts fade out towards the edge, so the animation melts into the page
+  // (worked out per object: far cheaper on phones than masking the whole canvas)
+  function edge(r) { return r <= 0.6 ? 1 : r >= 0.93 ? 0 : 1 - (r - 0.6) / 0.33; }
 
   // ---------------------------------------------------------------- physics
   // separation and orbital phase follow the gravitational-wave chirp:
@@ -52,39 +59,52 @@ var MERGER = {
     var omega = TAU * MERGER.turns * 0.625 * Math.pow(Math.max(tau, 1e-4), -0.375) / MERGER.inspiral;
     return { a: a, phi: phi, omega: Math.min(omega, 40), tau: tau };
   }
+  // the same orbit, looked up by phase instead of time (used to draw the tails)
+  function sepAtPhase(phi) {
+    if (phi <= 0) return A0;
+    var tau = Math.pow(Math.max(1 - phi / (TAU * MERGER.turns), 0), 1.6);
+    return A0 * Math.pow(tau, 0.25);
+  }
 
   function emit(o, k) {
-    // tidal streams leave each star; each stream keeps its star's colour at first
+    // puffs of stripped matter leave each star; each keeps its star's colour at first
     for (var s = 0; s < 2; s++) {
       var ang = o.phi + s * Math.PI;
       for (var n = 0; n < k; n++) {
-        if (particles.length > MERGER.maxParticles) return;
+        if (particles.length >= MERGER.maxParticles) return;
         var r = o.a + rand(0, 0.05);
         var vt = o.a * o.omega * rand(0.95, 1.3);
         particles.push({ r: r, th: ang + rand(-0.15, 0.15), L: r * vt, vr: rand(0.03, 0.14),
-                         age: 0, life: rand(1.8, 3.6), size: rand(0.012, 0.024), a: 0.45, ramp: s });
+                         age: 0, life: rand(1.8, 3.2), size: rand(0.014, 0.026), a: 0.5, ramp: s });
       }
     }
   }
 
   function explode() {
     merged = true;
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 200; i++) {
       var sp = rand(0.08, 0.5) * rand(0.6, 1);
       particles.push({ r: rand(0, 0.04), th: rand(0, TAU), L: rand(0.004, 0.03), vr: sp, age: 0,
-                       life: rand(2.4, 4.6), size: rand(0.022, 0.06), a: 0.13, ramp: 2 });
+                       life: rand(2.2, 4), size: rand(0.026, 0.044), a: 0.3, ramp: 2 });
     }
     ripples.push({ r: 0.03, a: 0.6, w: 2.2 });
   }
 
-  function reset() { particles = []; ripples = []; t = 0; lastRipple = 0; merged = false; }
+  function reset() { particles = []; ripples = []; t = 0; lastRipple = 0; merged = false; owed = 0; }
 
   function step(dt) {
     t += dt;
     if (t >= MERGER.cycle) reset();
     var o = orbit(t);
     if (!merged && t < MERGER.inspiral) {
-      if (o.a < 0.3) emit(o, Math.ceil((0.3 - o.a) * 40));
+      // emission is counted per second, not per frame, so 60 Hz and 120 Hz
+      // screens make the same amount of matter
+      if (o.a < 0.3) {
+        owed += (0.3 - o.a) * 900 * dt;
+        var k = Math.floor(owed);
+        owed -= k;
+        if (k) emit(o, k);
+      }
       var period = TAU / Math.max(o.omega, 0.1) / 2;           // ripples twice per orbit
       if (t - lastRipple > Math.max(period, 0.18)) {
         ripples.push({ r: 0.05, a: 0.1 + 0.25 * (1 - o.a / A0), w: 1 });
@@ -95,7 +115,7 @@ var MERGER = {
     for (var i = particles.length - 1; i >= 0; i--) {
       var p = particles[i];
       p.age += dt;
-      if (p.age > p.life || p.r > 1.05) { particles.splice(i, 1); continue; }
+      if (p.age > p.life || p.r > 0.95) { particles.splice(i, 1); continue; }
       p.vr += 0.02 * dt;
       p.r += p.vr * dt;
       p.th += (p.L / Math.max(p.r * p.r, 0.002)) * dt;
@@ -104,16 +124,18 @@ var MERGER = {
       var w = ripples[j];
       w.r += 0.42 * dt;
       w.a *= Math.pow(0.55, dt);
-      if (w.r > 1.1 || w.a < 0.01) ripples.splice(j, 1);
+      if (w.r > 0.95 || w.a < 0.01) ripples.splice(j, 1);
     }
   }
 
   // ---------------------------------------------------------------- set-up drawing
   var GOLD = [214, 150, 58], MAROON = [125, 31, 44], VIOLET = [109, 76, 160];
   var RAMPS = [
-    [MERGER.starA[1], GOLD, MAROON],            // stream from star A
-    [MERGER.starB[1], VIOLET, MAROON],          // stream from star B
-    [[236, 170, 80], [214, 110, 70], MAROON]    // debris after the collision
+    [MERGER.starA[1], GOLD, MAROON],            // matter from star A
+    [MERGER.starB[1], VIOLET, MAROON],          // matter from star B
+    [[236, 170, 80], [214, 110, 70], MAROON],   // debris after the collision
+    [MERGER.starA[0], MERGER.starA[1], VIOLET], // tail of star A: hot core → amber → violet
+    [MERGER.starB[0], MERGER.starB[1], VIOLET]  // tail of star B: hot core → blue → violet
   ];
   var SPRITES = [];
   function makeSprites() {
@@ -125,7 +147,8 @@ var MERGER = {
         cv.width = cv.height = 64;
         var g = cv.getContext("2d"), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
         gr.addColorStop(0, rgba(col, 0.9));
-        gr.addColorStop(0.35, rgba(col, 0.4));
+        gr.addColorStop(0.35, rgba(col, 0.42));
+        gr.addColorStop(0.7, rgba(col, 0.1));
         gr.addColorStop(1, rgba(col, 0));
         g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
         list.push(cv);
@@ -134,15 +157,24 @@ var MERGER = {
     });
   }
 
-  // the parts that never move — the engraved orbit paths and the graph's base
-  // line — are drawn once onto their own (transparent) canvas
-  function makeLayer() {
-    layer = document.createElement("canvas");
-    layer.width = layer.height = size;
-    var g = layer.getContext("2d");
-    g.lineWidth = 1 * dpr;
+  // the parts that never move — the soft sky disc, two faint guide rings, the
+  // engraved orbit paths and the graph's base line — are painted once and shown
+  // as the canvas's background picture, so no frame has to repaint them
+  function makeBackground() {
+    var bg = document.createElement("canvas");
+    bg.width = bg.height = size;
+    var g = bg.getContext("2d");
+
+    // a soft round window of sky whose edge feathers into the page (no hard line)
+    var gr = g.createRadialGradient(scale, scale, 0, scale, scale, scale);
+    var stops = [[0, 255, 255, 255, 0.9], [0.5, 248, 246, 239, 0.8], [0.72, 239, 235, 225, 0.72],
+                 [0.84, 232, 227, 214, 0.62], [0.92, 229, 223, 208, 0.4], [0.97, 229, 223, 208, 0.14],
+                 [1, 229, 223, 208, 0]];
+    stops.forEach(function (c) { gr.addColorStop(c[0], "rgba(" + c[1] + "," + c[2] + "," + c[3] + "," + c[4] + ")"); });
+    g.fillStyle = gr; g.fillRect(0, 0, size, size);
 
     // two whisper-thin guide rings that fade in and out around the circle
+    g.lineWidth = 1 * dpr;
     for (var ring = 0; ring < 2; ring++) {
       var rr = [0.86, 0.72][ring] * scale;
       var cg = g.createConicGradient ? g.createConicGradient(-Math.PI / 2 + ring, scale, scale) : null;
@@ -159,10 +191,9 @@ var MERGER = {
       g.setLineDash(ring ? [1 * dpr, 5 * dpr] : []);
       g.beginPath(); g.arc(scale, scale, rr, 0, TAU); g.stroke();
     }
-    g.setLineDash([]);
 
     // engraved inspiral paths, one per star
-    var cols = ["rgba(170,120,70,0.6)", "rgba(80,105,160,0.6)"];
+    var cols = ["rgba(170,120,70,0.5)", "rgba(80,105,160,0.5)"];
     for (var s = 0; s < 2; s++) {
       g.strokeStyle = cols[s];
       g.setLineDash([1.1 * dpr, 3.6 * dpr]);
@@ -180,23 +211,13 @@ var MERGER = {
     // base line of the gravitational-wave graph
     g.strokeStyle = "rgba(197,191,174,0.9)";
     g.beginPath(); g.moveTo(X(WAVE.x0), X(WAVE.y)); g.lineTo(X(WAVE.x1), X(WAVE.y)); g.stroke();
+
+    canvas.style.background = "url(" + bg.toDataURL() + ") center / 100% 100% no-repeat";
   }
 
-  // a soft round window of sky: a faint tinted disc whose edge feathers into the
-  // page (no hard line), with tiny distant stars inside
-  function makeBackdrop() {
-    backdrop = document.createElement("canvas");
-    backdrop.width = backdrop.height = size;
-    var g = backdrop.getContext("2d"), gr = g.createRadialGradient(scale, scale, 0, scale, scale, scale);
-    var stops = [[0, 255, 255, 255, 0.9], [0.5, 248, 246, 239, 0.8], [0.72, 239, 235, 225, 0.72],
-                 [0.84, 232, 227, 214, 0.62], [0.92, 229, 223, 208, 0.4], [0.97, 229, 223, 208, 0.14],
-                 [1, 229, 223, 208, 0]];
-    stops.forEach(function (c) { gr.addColorStop(c[0], "rgba(" + c[1] + "," + c[2] + "," + c[3] + "," + c[4] + ")"); });
-    g.fillStyle = gr; g.fillRect(0, 0, size, size);
-  }
   function makeDots() {
     dots = [];
-    for (var i = 0; i < 150; i++) {
+    for (var i = 0; i < 120; i++) {
       var r = Math.sqrt(Math.random()) * 0.88, a = rand(0, TAU);
       var big = Math.random() < 0.08;
       dots.push({ x: r * Math.cos(a), y: r * Math.sin(a), s: big ? rand(1.4, 2) : rand(0.5, 1.1),
@@ -222,30 +243,20 @@ var MERGER = {
     }
   }
 
-  // everything fades out towards the edge, so the animation melts into the page
-  function makeMask() {
-    mask = document.createElement("canvas");
-    mask.width = mask.height = size;
-    var g = mask.getContext("2d"), gr = g.createRadialGradient(scale, scale, 0, scale, scale, scale);
-    gr.addColorStop(0, "rgba(0,0,0,1)");
-    gr.addColorStop(0.6, "rgba(0,0,0,1)");
-    gr.addColorStop(0.93, "rgba(0,0,0,0)");
-    g.fillStyle = gr; g.fillRect(0, 0, size, size);
-  }
-
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     var w = box.getBoundingClientRect().width || 420;
-    size = Math.round(w * dpr);
+    var newSize = Math.round(w * dpr);
+    if (newSize === size) return false;   // phones fire "resize" while scrolling; nothing changed
+    size = newSize;
     canvas.width = canvas.height = size;
     scale = size / 2;
-    makeLayer();
-    makeMask();
-    makeBackdrop();
+    makeBackground();
+    return true;
   }
 
   // ---------------------------------------------------------------- drawing
-  function glow(x, y, r, stops) {
+  function glow(x, y, r, stops, fade) {
     var g = ctx.createRadialGradient(X(x), X(y), 0, X(x), X(y), r * scale);
     for (var i = 0; i < stops.length; i++) g.addColorStop(stops[i][0], stops[i][1]);
     ctx.fillStyle = g;
@@ -276,7 +287,7 @@ var MERGER = {
     ctx.lineWidth = 1.3 * dpr;
     ctx.lineJoin = "round";
     ctx.beginPath();
-    var n = Math.max(2, Math.round(700 * now / tEnd));
+    var n = Math.max(2, Math.round(420 * now / tEnd));
     for (var i = 0; i <= n; i++) {
       var time = now * i / n;
       var x = X(xAt(time)), y = X(WAVE.y - WAVE.amp * strain(time));
@@ -291,69 +302,86 @@ var MERGER = {
   }
 
   function drawStar(x, y, ang, stretch, col) {
-    glow(x, y, 0.16, [[0, rgba(col[1], 0.38)], [0.45, rgba(col[1], 0.13)], [1, rgba(col[1], 0)]]);
+    glow(x, y, 0.16, [[0, rgba(col[1], 0.38 * G)], [0.45, rgba(col[1], 0.13 * G)], [1, rgba(col[1], 0)]]);
     ctx.save();
     ctx.translate(X(x), X(y));
     ctx.rotate(ang);
     ctx.scale(stretch, 1 / Math.sqrt(stretch));
     var R = 0.05 * scale;
     var core = ctx.createRadialGradient(-R * 0.25, -R * 0.25, 0, 0, 0, R);
-    core.addColorStop(0, rgba(col[0], 1));
-    core.addColorStop(0.45, rgba(col[1], 1));
-    core.addColorStop(0.85, rgba(col[2], 0.95));
+    core.addColorStop(0, rgba(col[0], G));
+    core.addColorStop(0.45, rgba(col[1], G));
+    core.addColorStop(0.85, rgba(col[2], 0.95 * G));
     core.addColorStop(1, rgba(col[2], 0));
     ctx.fillStyle = core;
     ctx.beginPath(); ctx.arc(0, 0, R, 0, TAU); ctx.fill();
     ctx.restore();
   }
 
-  function drawTrail(s, col) {
-    // a short comet tail just behind each star, along its orbit
-    var steps = 26, span = 0.55;
-    for (var i = steps; i > 0; i--) {
-      var t1 = Math.max(t - span * i / steps, 0), t2 = Math.max(t - span * (i - 1) / steps, 0);
-      var o1 = orbit(t1), o2 = orbit(t2);
-      var a1 = o1.phi + s * Math.PI, a2 = o2.phi + s * Math.PI;
-      ctx.strokeStyle = rgba(col[1], 0.55 * (1 - i / steps));
-      ctx.lineWidth = (1 + 2.5 * (1 - i / steps)) * dpr;
-      ctx.beginPath();
-      ctx.moveTo(X(o1.a * Math.cos(a1)), X(o1.a * Math.sin(a1)));
-      ctx.lineTo(X(o2.a * Math.cos(a2)), X(o2.a * Math.sin(a2)));
-      ctx.stroke();
+  // A smooth tail of stripped matter behind each star: many soft, overlapping
+  // glows laid along the star's own orbit, shrinking and cooling from the hot
+  // core colour through the star's colour to violet. As the stars close in the
+  // tail gets longer and swings outwards into a spiral arm.
+  function drawTail(s, o) {
+    var close = Math.max(0, 0.26 - o.a) / 0.26;           // 0 far apart … 1 touching
+    var len = Math.min(MERGER.tail * (1 + 1.4 * close), 0.85 * TAU);
+    var W = 0.05 * (0.85 + 0.6 * close);                  // tail width at the star
+    var n = 54;
+    for (var i = n; i >= 1; i--) {                         // from the tip of the tail up to the star
+      var u = i / n;                                       // 0 at the star, 1 at the tip
+      var ph = o.phi - len * u;
+      var r = sepAtPhase(ph) * (1 + 0.55 * close * u * u) + 0.01 * u;
+      if (r < 0.005) continue;
+      var ang = ph + s * Math.PI;
+      var x = r * Math.cos(ang), y = r * Math.sin(ang);
+      var w = W * (0.25 + 0.95 * Math.pow(1 - u, 0.7)) * (1 + 0.6 * close * u);
+      var al = 0.26 * Math.pow(1 - u, 1.2) * edge(r) * G;
+      if (al < 0.004) continue;
+      ctx.globalAlpha = al;
+      var px = X(x), py = X(y), sz = w * scale * 2;
+      ctx.drawImage(SPRITES[3 + s][Math.round(Math.min(1, 0.15 + u) * 15)], px - sz, py - sz, 2 * sz, 2 * sz);
     }
+    ctx.globalAlpha = 1;
   }
 
   function draw(now) {
     now = now || 0;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalCompositeOperation = "source-over";
-    ctx.clearRect(0, 0, size, size);       // transparent: the page shows through
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, size, size);       // transparent: the sky disc behind shows through
+
+    drawDots(now);                         // distant stars twinkle underneath everything
+
+    // the moving parts fade out together at the end of the loop
+    var fadeOut = MERGER.cycle - 0.8;
+    G = t > fadeOut ? Math.max(0, 1 - (t - fadeOut) / 0.8) : 1;
 
     for (var j = 0; j < ripples.length; j++) {
       var w = ripples[j];
-      ctx.strokeStyle = "rgba(29,53,87," + (w.a * 0.8).toFixed(3) + ")";
+      ctx.strokeStyle = "rgba(29,53,87," + (w.a * 0.8 * edge(w.r) * G).toFixed(3) + ")";
       ctx.lineWidth = w.w * dpr;
       ctx.beginPath(); ctx.arc(scale, scale, w.r * scale, 0, TAU); ctx.stroke();
     }
 
-    // tidal streams and debris; "multiply" lets overlapping puffs deepen like ink
-    ctx.globalCompositeOperation = "multiply";
+    // stripped matter and debris: soft puffs that cool to maroon as they drift out
     for (var k = 0; k < particles.length; k++) {
       var p = particles[k], f = p.age / p.life;
       var c = Math.min(1, f * 1.5 + (p.ramp === 2 ? 0.2 : 0));
-      ctx.globalAlpha = (1 - f) * (f < 0.08 ? f / 0.08 : 1) * p.a;
-      var s = p.size * scale * (1 + 1.5 * f);
+      var al = (1 - f) * (f < 0.08 ? f / 0.08 : 1) * p.a * edge(p.r) * G;
+      if (al < 0.01) continue;
+      ctx.globalAlpha = al;
+      var s = p.size * scale * (1 + 1.1 * f);
       ctx.drawImage(SPRITES[p.ramp][Math.round(c * 15)],
                     X(p.r * Math.cos(p.th)) - s, X(p.r * Math.sin(p.th)) - s, 2 * s, 2 * s);
     }
     ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = "source-over";
 
     var o = orbit(t);
     if (!merged) {
       var cols = [MERGER.starA, MERGER.starB];
       var stretch = 1 + 1.4 * Math.max(0, 0.2 - o.a) / 0.2;      // tides stretch the stars
-      for (var s2 = 0; s2 < 2; s2++) drawTrail(s2, cols[s2]);
+      for (var s2 = 0; s2 < 2; s2++) drawTail(s2, o);
       for (var s3 = 0; s3 < 2; s3++) {
         var ang = o.phi + s3 * Math.PI;
         drawStar(o.a * Math.cos(ang), o.a * Math.sin(ang), ang, stretch, cols[s3]);
@@ -364,25 +392,27 @@ var MERGER = {
       var fl = Math.max(0, 1 - since / 0.9);
       if (fl > 0) {                                       // the burst: gold glow and a racing maroon rim
         glow(0, 0, 0.12 + since * 0.8, [[0, "rgba(255,214,120," + (0.9 * fl).toFixed(3) + ")"], [0.55, "rgba(232,160,60," + (0.45 * fl).toFixed(3) + ")"], [1, "rgba(232,160,60,0)"]]);
-        ctx.strokeStyle = "rgba(125,31,44," + (0.7 * fl).toFixed(3) + ")";
+        var rim = 0.05 + since * 0.75;
+        ctx.strokeStyle = "rgba(125,31,44," + (0.7 * fl * edge(rim)).toFixed(3) + ")";
         ctx.lineWidth = 2 * dpr;
-        ctx.beginPath(); ctx.arc(scale, scale, (0.05 + since * 0.75) * scale, 0, TAU); ctx.stroke();
+        ctx.beginPath(); ctx.arc(scale, scale, rim * scale, 0, TAU); ctx.stroke();
       }
-      var kn = Math.min(1, since / 0.8) * Math.max(0, 1 - (since - 1.2) / 3.2);
+      var kn = Math.min(1, since / 0.8) * Math.max(0, 1 - (since - 1.2) / 3.2) * G;
       if (kn > 0) {                                       // the kilonova afterglow
         glow(0, 0, 0.12 + 0.42 * Math.min(1, since / 3), [[0, "rgba(255,226,170," + (0.75 * kn).toFixed(3) + ")"], [0.45, "rgba(240,170,110," + (0.35 * kn).toFixed(3) + ")"], [1, "rgba(200,90,80,0)"]]);
       }
-      var jet = Math.min(1, since / 0.35) * Math.max(0, 1 - (since - 0.5) / 2.2);
+      var jet = Math.min(1, since / 0.35) * Math.max(0, 1 - (since - 0.5) / 2.2) * G;
       if (jet > 0) {                                      // two thin polar jets
         ctx.save();
         ctx.translate(scale, scale);
         ctx.rotate(-0.35);
         for (var d = -1; d <= 1; d += 2) {
-          var len = 0.8 * Math.min(1, since / 0.6) * scale * d;
+          var len = 0.78 * Math.min(1, since / 0.6) * scale * d;
           for (var l = 0; l < 3; l++) {
-            var wid = [0.006, 0.016, 0.03][l] * scale, al = [0.6, 0.22, 0.08][l] * jet;
+            var wid = [0.006, 0.016, 0.03][l] * scale, aj = [0.6, 0.22, 0.08][l] * jet;
             var g = ctx.createLinearGradient(0, 0, 0, len);
-            g.addColorStop(0, "rgba(29,53,87," + al.toFixed(3) + ")");
+            g.addColorStop(0, "rgba(29,53,87," + aj.toFixed(3) + ")");
+            g.addColorStop(0.65, "rgba(29,53,87," + (aj * 0.3).toFixed(3) + ")");
             g.addColorStop(1, "rgba(29,53,87,0)");
             ctx.fillStyle = g;
             ctx.beginPath();
@@ -392,27 +422,13 @@ var MERGER = {
         }
         ctx.restore();
       }
-      var rem = Math.max(0, 1 - since / 4.5);             // the black hole left behind
+      var rem = Math.max(0, 1 - since / 4.5) * G;         // the black hole left behind
       glow(0, 0, 0.045, [[0, "rgba(16,18,22," + rem.toFixed(3) + ")"], [0.6, "rgba(16,18,22," + (0.8 * rem).toFixed(3) + ")"], [1, "rgba(16,18,22,0)"]]);
     }
 
-    // soften the edges, and fade everything out at the end of the loop
-    ctx.globalCompositeOperation = "destination-in";
-    ctx.drawImage(mask, 0, 0);
-    var fadeOut = MERGER.cycle - 0.8;
-    if (t > fadeOut) {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0,0,0," + Math.min(1, (t - fadeOut) / 0.8).toFixed(3) + ")";
-      ctx.fillRect(0, 0, size, size);
-    }
-    // underneath everything: distant stars, the orbit paths, then the soft sky disc
-    ctx.globalCompositeOperation = "destination-over";
-    drawDots(now);
-    ctx.drawImage(layer, 0, 0);
-    ctx.drawImage(backdrop, 0, 0);
-    ctx.globalCompositeOperation = "source-over";
-    if (t <= fadeOut) drawWave();
-    else { ctx.globalAlpha = 1 - Math.min(1, (t - fadeOut) / 0.8); drawWave(); ctx.globalAlpha = 1; }
+    ctx.globalAlpha = G;
+    drawWave();                            // the gravitational-wave graph underneath
+    ctx.globalAlpha = 1;
   }
 
   // ---------------------------------------------------------------- loop
@@ -442,7 +458,14 @@ var MERGER = {
   resize();
   if (reduce) still(); else { reset(); draw(); start(); }
 
-  window.addEventListener("resize", function () { resize(); if (reduce) still(); else draw(); });
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      if (!resize()) return;              // only when the width really changed
+      if (reduce) still(); else draw();
+    }, 150);
+  });
   document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else start(); });
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (e) {
