@@ -8,7 +8,7 @@ build_research.py — builds research.html, then refreshes index.html
 What to edit in this file:
   THRUSTS   the three research areas: Home-page line, paragraph, topics, faculty
   FIGURES   the slideshow of paper figures inside each area:
-            FIGURES["theory"], FIGURES["experiment"], FIGURES["string"]
+            FIGURES["particle"], FIGURES["experiment"], FIGURES["string"]
 
 Downloading figures needs (once):  sudo apt install imagemagick poppler-utils ghostscript
 Write "&" as "&amp;" inside text.
@@ -24,7 +24,7 @@ from build_all import *  # noqa: F401,F403  (shared helpers: head, footer, img, 
 # ==========================================================================
 # THRUSTS  —  the three research areas
 # ==========================================================================
-# "id" must stay "theory", "experiment" or "string": it links each area to its
+# "id" must stay "particle", "experiment" or "string": it links each area to its
 # FIGURES list below and to research.html#theory etc.
 #
 #   "blurb"   one short line, shown on the HOME page card (index.html)
@@ -63,8 +63,8 @@ THRUSTS = [
         "link": ("https://sites.google.com/view/st-iitk/home", "String theory group site"),
     },
     {
-        "id": "theory",
-        "art": "theory",
+        "id": "particle",
+        "art": "particle",
         "num": "02",
         "title": "Particle Theory",
         "accent": "accent-maroon",
@@ -129,7 +129,7 @@ THRUSTS = [
 # ==========================================================================
 # FIGURES  —  the slideshow inside each research area
 # ==========================================================================
-# FIGURES["theory"], FIGURES["experiment"] and FIGURES["string"] each hold the
+# FIGURES["particle"], FIGURES["experiment"] and FIGURES["string"] each hold the
 # slides shown in that area, in order. One { ... } block = one slide:
 #
 #   "faculty"  whose paper it is (not shown on the page; helps you keep track)
@@ -270,7 +270,7 @@ FIGURES = {
     ],
     
     # ---------------------------------------------------------- Particle Theory
-    "theory": [
+    "particle": [
         {
             "faculty": "Dipankar Chakrabarti",
             "caption": "Isotropic transverse pressure carried by the down quark (left) and the up "
@@ -545,10 +545,12 @@ def build():
       <div class="callout accent-maroon" data-reveal>
         <h3>Collaborating across subgroups</h3>
         <p class="muted mb-0">
-          Several projects sit deliberately between the subgroups — effective field theory
-          matched to LHC measurements, dark sector models tested against intensity-frontier
-          data, machine learning methods shared between lattice and collider work. Prospective
-          students and postdocs are encouraged to talk to more than one faculty member.
+          Several projects sit deliberately between the subgroups: black holes, compact
+          objects and gravitational waves link string theory with particle theory and
+          cosmology, while dark matter, new-particle and neutrino searches connect
+          phenomenology with the CMS and DUNE experiments, and machine-learning methods are
+          shared across collider work. Prospective students and postdocs are encouraged to
+          talk to more than one faculty member.
         </p>
       </div>
     </div>
