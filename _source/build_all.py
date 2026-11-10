@@ -202,7 +202,19 @@ def fold(show, hide, inner, open=False):
 def head(title, desc, page):
     full = f"{title} · {SITE_SHORT}" if page != "index.html" else f"{SITE_NAME}"
     url = "https://hepiitk.github.io/" if page == "index.html" else f"https://hepiitk.github.io/{page}"
-    gsc = '\n<meta name="google-site-verification" content="OSpNjTY2TTAVbXWjhnyjYFKbHjAqgBK_i39DOzeWIIg">' if page == "index.html" else ""
+    extra_home = ""
+    if page == "index.html":
+        extra_home = """
+<meta name="google-site-verification" content="OSpNjTY2TTAVbXWjhnyjYFKbHjAqgBK_i39DOzeWIIg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "HEP IIT Kanpur",
+  "alternateName": ["HEP@IITK", "High Energy Physics @ IIT Kanpur"],
+  "url": "https://hepiitk.github.io/"
+}
+</script>"""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -210,7 +222,8 @@ def head(title, desc, page):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{full}</title>
 <meta name="description" content="{desc}">
-<meta name="theme-color" content="#fbfaf6">{gsc}
+<meta name="theme-color" content="#fbfaf6">{extra_home}
+<meta property="og:site_name" content="HEP IIT Kanpur">
 <meta property="og:title" content="{full}">
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="website">
