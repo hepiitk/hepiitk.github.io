@@ -88,7 +88,7 @@ ICON = {
 # a glowing kilonova cloud. Drawn by assets/js/collider.js on the <canvas> below;
 # its styles are in assets/style.css (search for ".merger").
 HERO_ART = """
-<div class="merger" role="img" aria-label="Animation of two neutron stars spiralling together, colliding and blowing out a glowing cloud of debris">
+<div class="merger" role="img" aria-label="Animation of particle collisions in a detector, with a histogram slowly revealing a bump from a new particle">
   <canvas width="840" height="840" aria-hidden="true"></canvas>
 </div>
 """
@@ -349,7 +349,6 @@ def write(name, body):
 # 4. HOME PAGE  (index.html)
 # ==========================================================================
 # Big photo in the Home page hero: (file inside assets/, credit line under it)
-HERO_PHOTO = ("Home/e8e5c3c4d0f40b553317792526dc596a.jpg", "pic courtesy: CERN")
 
 
 def build_index():
@@ -417,9 +416,7 @@ def build_index():
         </div>
       </div>
       <figure class="hero__art">
-        {img(HERO_PHOTO[0], "The group's research spans collider, neutrino and gravitational physics", eager=True)}
         {HERO_ART.strip()}
-        <figcaption class="credit mt-4">{HERO_PHOTO[1]}</figcaption>
       </figure>
     </div>
   </section>
