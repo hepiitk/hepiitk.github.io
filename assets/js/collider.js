@@ -53,13 +53,14 @@ var COLLIDER = {
   var NE = 60, NH = 36, NMU = 12;                   // calorimeter cells and muon sectors
   var H = { x0: -0.52, x1: 0.52, y: 0.74, h: 0.25, bins: 24, peak: 10, full: 74, slope: 7 };
 
-  var size = 0, scale = 0, dpr = 1;
+  var ZOOM = 1.1;                                   // >1 makes the drawing fill more of its square
+  var size = 0, scale = 0, mid = 0, dpr = 1;
   var ev = null, evT = 0, bins = [], total = 0, rain = [], owed = 0, hT = 0, hFade = 1;
   var running = false, onScreen = true, last = 0;
 
   function rand(a, b) { return a + Math.random() * (b - a); }
-  function X(x) { return scale + x * scale; }
-  function Y(y) { return scale + y * scale; }
+  function X(x) { return mid + x * scale; }
+  function Y(y) { return mid + y * scale; }
   function ease(x) { x = Math.min(Math.max(x, 0), 1); return 1 - Math.pow(1 - x, 3); }
   function rgba(c, a) { return "rgba(" + c + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")"; }
   function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(TAU * Math.random()); }
@@ -78,6 +79,11 @@ var COLLIDER = {
   function expected(k) {               // background expected in bin k, for the entries so far
     var norm = total * (1 - COLLIDER.signal) * (1 - Math.exp(-1 / H.slope)) / (1 - Math.exp(-H.bins / H.slope));
     return norm * Math.exp(-k / H.slope);
+  }
+  // text size: full size on a desktop-sized drawing, a little smaller on phones
+  function font(px) {
+    var f = Math.max(0.78, Math.min(1, scale / dpr / 230));
+    return "italic " + Math.round(px * f * dpr) + "px Georgia, 'Times New Roman', serif";
   }
   function binX(k) { return H.x0 + (H.x1 - H.x0) * (k + 0.5) / H.bins; }
   function resetHist() { bins = []; for (var i = 0; i < H.bins; i++) bins.push({ n: 0, shown: 0 }); total = 0; hT = 0; rain = []; }
@@ -164,7 +170,7 @@ var COLLIDER = {
     // a soft round halo centred on the detector (not on the canvas), so the
     // detector's rings and the halo share one centre; it fades out well inside
     // the canvas, and the histogram sits on the plain page below it
-    var hr = Math.min(R.mu[2][1] + 0.18, 0.98 + CY) * scale;
+    var hr = Math.min(R.mu[2][1] + 0.18, 0.98 / ZOOM + CY) * scale;
     var gr = g.createRadialGradient(X(0), Y(CY), 0, X(0), Y(CY), hr);
     [[0, 255, 255, 255, 0.9], [0.55, 248, 246, 239, 0.8], [0.72, 239, 235, 225, 0.7],
      [0.82, 232, 227, 214, 0.55], [0.9, 229, 223, 208, 0.3], [0.96, 229, 223, 208, 0.1],
@@ -223,7 +229,7 @@ var COLLIDER = {
     }
     g.stroke();
     g.fillStyle = "rgba(16,18,22,0.55)";
-    g.font = "italic " + Math.round(11 * dpr) + "px Georgia, 'Times New Roman', serif";
+    g.font = font(11);
     g.textAlign = "right";
     g.fillText("mass of the photon pair →", X(H.x1), Y(H.y) + 17 * dpr);
     g.textAlign = "left";
@@ -243,7 +249,8 @@ var COLLIDER = {
     if (newSize === size) return false;    // phones fire "resize" while scrolling; nothing changed
     size = newSize;
     canvas.width = canvas.height = size;
-    scale = size / 2;
+    mid = size / 2;
+    scale = mid * ZOOM;
     makeBackground();
     return true;
   }
@@ -401,7 +408,7 @@ var COLLIDER = {
       var la = Math.min(1, Math.max(0, (t - 0.5) / 0.25)) * fade;
       if (la > 0) {
         ctx.fillStyle = rgba(MAROON, la);
-        ctx.font = "italic " + Math.round(13 * dpr) + "px Georgia, 'Times New Roman', serif";
+        ctx.font = font(13);
         ctx.textAlign = "center";
         ctx.fillText(e.kind === "gg" ? "γγ candidate" : "4μ candidate", ox, Y(CY - R.mu[2][1] - 0.035));
       }
@@ -447,11 +454,18 @@ var COLLIDER = {
     var excess = pk - expected(H.peak);
     if (total > 120 && excess > 10) {
       var la = Math.min(1, (excess - 10) / 8);
-      var top = Math.min(1, pk / H.full) * H.h;
+      // sit above the tallest bar the label spans, and stay inside the histogram
+      ctx.font = font(12);
+      var tw = ctx.measureText("a new particle?").width / scale;
+      var cx = Math.min(Math.max(binX(H.peak), H.x0 + tw / 2 + 0.02), H.x1 - tw / 2);
+      var top = 0;
+      for (var kb2 = 0; kb2 < bins.length; kb2++) {
+        var bl = H.x0 + w * kb2, br = bl + w;
+        if (br > cx - tw / 2 && bl < cx + tw / 2) top = Math.max(top, Math.min(1, bins[kb2].shown / H.full) * H.h);
+      }
       ctx.fillStyle = rgba(MAROON, la);
-      ctx.font = "italic " + Math.round(12 * dpr) + "px Georgia, 'Times New Roman', serif";
       ctx.textAlign = "center";
-      ctx.fillText("a new particle?", X(binX(H.peak)), Y(H.y - top) - 9 * dpr);
+      ctx.fillText("a new particle?", X(cx), Y(H.y - top) - 7 * dpr);
     }
     ctx.globalAlpha = 1;
   }
